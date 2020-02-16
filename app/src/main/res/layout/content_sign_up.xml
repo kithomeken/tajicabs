@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".passengers.SignUpActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <ImageView
+                android:layout_width = "match_parent"
+                android:layout_height= "100dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/taji_cabs_foreground"/>
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/dim_20"
+                android:layout_marginBottom="@dimen/dim_00"
+                android:text="@string/taji_registration"
+                tools:ignore="SpUsage" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@string/sign_up_text" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/first_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim_20"
+                android:textColorHint="@color/colorPrimary"
+                android:hint="@string/first_name"
+                android:ems="10"
+                android:paddingBottom="20dp"
+                android:textColor="@color/colorPrimary"
+                android:inputType="textCapWords" >
+            </androidx.appcompat.widget.AppCompatEditText>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/last_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim_20"
+                android:textColorHint="@color/colorPrimary"
+                android:hint="@string/last_name"
+                android:ems="10"
+                android:paddingBottom="20dp"
+                android:textColor="@color/colorPrimary"
+                android:inputType="textCapWords" >
+            </androidx.appcompat.widget.AppCompatEditText>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/id_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim_20"
+                android:textColorHint="@color/colorPrimary"
+                android:hint="@string/id_number"
+                android:ems="10"
+                android:paddingBottom="20dp"
+                android:textColor="@color/colorPrimary"
+                android:inputType="number" >
+            </androidx.appcompat.widget.AppCompatEditText>
+
+        </RelativeLayout><RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/phone_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim_20"
+                android:textColorHint="@color/colorPrimary"
+                android:hint="@string/phone_number"
+                android:ems="10"
+                android:paddingBottom="20dp"
+                android:textColor="@color/colorPrimary"
+                android:inputType="number" >
+            </androidx.appcompat.widget.AppCompatEditText>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim_20"
+                android:textColorHint="@color/colorPrimary"
+                android:hint="@string/email"
+                android:ems="10"
+                android:paddingBottom="20dp"
+                android:textColor="@color/colorPrimary"
+                android:inputType="textCapWords" >
+            </androidx.appcompat.widget.AppCompatEditText>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim_20"
+                android:textColorHint="@color/colorPrimary"
+                android:hint="@string/password"
+                android:ems="10"
+                android:paddingBottom="20dp"
+                android:textColor="@color/colorPrimary"
+                android:inputType="textPassword" >
+            </androidx.appcompat.widget.AppCompatEditText>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim_20"
+                android:textColorHint="@color/colorPrimary"
+                android:hint="@string/confirm_password"
+                android:ems="10"
+                android:paddingBottom="20dp"
+                android:textColor="@color/colorPrimary"
+                android:inputType="textPassword" >
+            </androidx.appcompat.widget.AppCompatEditText>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <TextView
+                android:id="@+id/regFailed"
+                android:layout_centerInParent="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/error"
+                android:visibility="gone"
+                android:text="@string/reg_failed"
+                android:gravity="center_horizontal" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_05"
+            android:paddingLeft="@dimen/dim_05">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/accountSignUp"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dim_35"
+                android:background="@drawable/round_button"
+                android:textColor="@android:color/white"
+                android:text="@string/sign_up"
+                android:paddingRight="50dp"
+                android:paddingLeft="50dp"
+                android:layout_gravity="center"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/dim_20"
+            android:paddingLeft="@dimen/dim_20"
+            android:layout_marginBottom="@dimen/dim_40">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/accountSignIn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="@string/accountSignIn"
+                android:layout_centerInParent="true"
+                android:textAllCaps="false"
+                android:textAlignment="center"
+                android:paddingRight="@dimen/dim_00"
+                android:paddingLeft="@dimen/dim_05"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
