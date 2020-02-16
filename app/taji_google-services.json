@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "920131620339",
+    "firebase_url": "https://taji-cab.firebaseio.com",
+    "project_id": "taji-cab",
+    "storage_bucket": "taji-cab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920131620339:android:2371e9478f8c8fa8031686",
+        "android_client_info": {
+          "package_name": "com.tajicabs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920131620339-ikfnlrcdg4tqs029nr841vqc7g926rpl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMxutYwv52sgKnyFT5dNri82h1BjT1KzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "920131620339-ikfnlrcdg4tqs029nr841vqc7g926rpl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
