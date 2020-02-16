@@ -22,21 +22,30 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".passengers.MapsActivity"
-            android:label="@string/title_activity_maps"
-            android:theme="@style/MapsActionBar" />
-        <activity
-            android:name=".passengers.SignUpActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".passengers.SignInActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".passengers.PassengerHome"
+            android:label="@string/title_activity_passenger_home"
+            android:theme="@style/AppTheme.TajiNoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Sliding"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".passengers.MapsActivity"
+            android:label="@string/title_activity_maps"
+            android:theme="@style/MapsActionBar" />
+        <activity
+            android:name=".passengers.SignUpActivity"
+            android:theme="@style/AppTheme.TajiNoActionBar" />
+        <activity
+            android:name=".passengers.SignInActivity"
+            android:theme="@style/AppTheme.TajiNoActionBar"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

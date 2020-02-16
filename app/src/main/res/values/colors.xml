@@ -8,4 +8,5 @@
     <color name="dark_grey">#707B7C</color>
     <color name="error">#FF0000</color>
     <color name="light_grey">#EBEDEF</color>
+    <color name="lightGreen">#ABEBC6</color>
 </resources>
