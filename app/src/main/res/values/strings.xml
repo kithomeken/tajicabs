@@ -43,6 +43,9 @@
     <string name="default_info_title">Default Location</string>
     <string name="default_info_snippet">No places found. Location services don\'t have permissions.</string>
     <string name="pick_place">Choose a place</string>
+    <string name="hello">Hello</string>
+    <string name="follow">Follow</string>
+    <string name="title_activity_passenger_home">Passenger Home</string>
 
 
 </resources>
