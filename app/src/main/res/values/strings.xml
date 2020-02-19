@@ -34,6 +34,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="title_activity_maps">Taji Cabs</string>
 
+    // Home Activity
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
@@ -46,6 +47,8 @@
     <string name="hello">Hello</string>
     <string name="follow">Follow</string>
     <string name="title_activity_passenger_home">Passenger Home</string>
+    <string name="pick_up">Enter Pick Up Point</string>
+    <string name="destination">Enter Destination</string>
 
 
 </resources>

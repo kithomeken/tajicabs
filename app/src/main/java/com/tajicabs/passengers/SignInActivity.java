@@ -135,7 +135,7 @@ public class SignInActivity extends Firebase implements View.OnClickListener {
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             // Sign In User Automatically
-            Intent intent = new Intent(SignInActivity.this, MapsActivity.class);
+            Intent intent = new Intent(SignInActivity.this, PassengerHome.class);
             startActivity(intent);
             finish();
 

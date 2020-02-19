@@ -12,3 +12,11 @@
 /captures
 .externalNativeBuild
 .cxx
+.firebaserc
+.firebase.json
+.firestore.index.json
+.firestore.rules
+.firestore-debug.log
+.database.rules.json
+.package-lock.json
+/functions

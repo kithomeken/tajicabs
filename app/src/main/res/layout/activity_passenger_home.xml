@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_passenger_home"
+        app:headerLayout="@layout/nav_header_passenger_home2"
         app:menu="@menu/activity_passenger_home_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
