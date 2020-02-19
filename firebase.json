@@ -1,6 +1,6 @@
 {
   "database": {
-    "rules": "Y"
+    "rules": "database.rules.json"
   },
   "firestore": {
     "rules": "firestore.rules",
@@ -9,7 +9,6 @@
   "functions": {
     "predeploy": [
       "npm --prefix \"$RESOURCE_DIR\" run lint"
-    ],
-    "source": "functions"
+    ]
   }
 }

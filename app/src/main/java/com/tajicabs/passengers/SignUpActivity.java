@@ -2,6 +2,7 @@ package com.tajicabs.passengers;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -28,6 +29,8 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.tajicabs.configuration.TajiCabs.PASSENGER_DETAILS;
 
 public class SignUpActivity extends Firebase implements View.OnClickListener {
     private static final String TAG = "Sign Up Activity";
@@ -198,7 +201,7 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
                     // Collection - passengers
                     String email = email();
                     String firstName = firstName();
-                    String lastName = lastName();
+                    final String lastName = lastName();
                     String strId = idNumber();
                     String phoneNumber = phoneNumber();
 
@@ -220,6 +223,22 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
                                 Log.i(TAG, "Passenger Data Created");
                                 STATUS = "Success";
 
+                                SharedPreferences sharedPreferences;
+
+                                String email = emailText.getText().toString();
+                                String phone = phoneText.getText().toString();
+                                String idNum = idText.getText().toString();
+                                String names = firstText.getText().toString() + " " + lastText.getText().toString();
+
+                                sharedPreferences = getApplicationContext().getSharedPreferences(PASSENGER_DETAILS, 0);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                                editor.putString("EMAIL", email);
+                                editor.putString("PHONE", phone);
+                                editor.putString("ID_NUM", idNum);
+                                editor.putString("NAMES", names);
+                                editor.apply();
+
                                 FirebaseUser firebaseUser = mAuth.getCurrentUser();
                                 updateUI(firebaseUser);
                             } else {
@@ -235,7 +254,7 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
                     Log.i(TAG, "createUserWithEmail:failure", task.getException());
 
                     regFailed.setVisibility(View.VISIBLE);
-                    regFailed.setText(task.getException().toString());
+                    regFailed.setText(task.getException().getMessage());
                     updateUI(null);
                 }
 
@@ -253,7 +272,7 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
 
         if (user != null) {
             // Sign In User Automatically
-            Intent intent = new Intent(SignUpActivity.this, MapsActivity.class);
+            Intent intent = new Intent(SignUpActivity.this, PassengerHome.class);
             startActivity(intent);
             finish();
 
