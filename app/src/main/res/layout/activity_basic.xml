@@ -6,21 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".passengers.BasicActivity">
 
-<!--
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
--->
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/transparent"
+            android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-<!--    </com.google.android.material.appbar.AppBarLayout>-->
+    </com.google.android.material.appbar.AppBarLayout>
 
     <fragment
         android:id="@+id/map_fragment"
@@ -29,17 +27,14 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <include layout="@layout/content_basic" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/geo_location"
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginTop="@dimen/fab_margin"
-        android:layout_marginStart="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="280dp"
-        app:srcCompat="@drawable/ic_geo_location" />
-
-    <include layout="@layout/bottom_sheet" />
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
