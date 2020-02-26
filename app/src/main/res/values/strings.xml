@@ -49,6 +49,11 @@
     <string name="title_activity_passenger_home">Passenger Home</string>
     <string name="pick_up">Enter Pick Up Point</string>
     <string name="destination">Enter Destination</string>
+    <string name="book_ride">Book your ride</string>
+    <string name="origin">From:</string>
+    <string name="dest">To:</string>
+    <string name="request_ride">Request Ride</string>
+    <string name="title_activity_basic">BasicActivity</string>
 
 
 </resources>

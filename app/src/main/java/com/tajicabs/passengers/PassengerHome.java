@@ -1,29 +1,40 @@
 package com.tajicabs.passengers;
 
-import android.content.DialogInterface;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -33,21 +44,25 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.TravelMode;
+
 import com.tajicabs.R;
+import com.tajicabs.directions.TajiDirections;
 
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -55,64 +70,63 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Arrays;
+import java.util.List;
 
+import static com.tajicabs.configuration.TajiCabs.DEFAULT_ZOOM;
+import static com.tajicabs.configuration.TajiCabs.DEST_LTNG;
+import static com.tajicabs.configuration.TajiCabs.DEST_NAME;
+import static com.tajicabs.configuration.TajiCabs.DISTANCE;
 import static com.tajicabs.configuration.TajiCabs.GOOGLE_API;
+import static com.tajicabs.configuration.TajiCabs.ORIG_LTNG;
+import static com.tajicabs.configuration.TajiCabs.ORIG_NAME;
+import static com.tajicabs.configuration.TajiCabs.REQUEST_LOCATION;
 
 public class PassengerHome extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         OnMapReadyCallback {
+
     private static final String TAG = PassengerHome.class.getName();
 
+    // Dependency classes
+    TajiDirections tajiDirections = new TajiDirections();
+
+    protected static final int overview = 0;
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+
     private AppBarConfiguration mAppBarConfiguration;
-    // Firebase
     private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
-
-    // Google Maps
     private GoogleMap mMap;
-    private CameraPosition mCameraPosition;
-
-    // Location Request
     private LocationRequest mLocationRequest;
 
-    // The entry points to the Places API.
-//    private GeoDataClient mGeoDataClient;
-//    private PlaceDetectionClient mPlaceDetectionClient;
-
-    // The entry point to the Fused Location Provider.
     private FusedLocationProviderClient mFusedLocationProviderClient;
-
-    // A default location (Nairobi, Kenya) and default zoom to use when location permission is
-    // not granted.
     private final LatLng mDefaultLocation = new LatLng(-1.2833 , 36.8167);
-    private static final int DEFAULT_ZOOM = 18;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
-    // The geographical location where the device is currently located. That is, the last-known
-    // location retrieved by the Fused Location Provider.
     private Location mLastKnownLocation;
+    private GoogleApiClient googleApiClient;
 
-    // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
+    private final int AUTOCOMPLETE_REQUEST_CODE = 1;
 
-    // Used for selecting the current place.
-    private static final int M_MAX_ENTRIES = 5;
-    private String[] mLikelyPlaceNames;
-    private String[] mLikelyPlaceAddresses;
-    private String[] mLikelyPlaceAttributions;
-    private LatLng[] mLikelyPlaceLatLngs;
+    private LinearLayout requestBlock, locationBlock;
+    private FloatingActionButton geoLocation;
+    private EditText textPickUp, textDropOffs;
+
+    private static String EDIT_TEXT_TYPE;
+
 
     @Override
     public void onStart() {
         super.onStart();
 
-        //check if user is logged in
         FirebaseUser currentUser = mAuth.getCurrentUser();
         checkFirebaseSession(currentUser);
     }
@@ -121,58 +135,34 @@ public class PassengerHome extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passenger_home);
-
         mAuth = FirebaseAuth.getInstance();
 
-//        String email = user.getEmail();
-//
-//        // Get the collection reference
-//        DocumentReference documentReference = db.collection("passengers").document(email);
-//        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot document = task.getResult();
-//
-//                    if (document.exists()) {
-//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-//                    } else {
-//                        Log.d(TAG, "No such document");
-//                    }
-//                } else {
-//                    Log.d(TAG, "get failed with ", task.getException());
-//                }
-//            }
-//        });
-
-        FirebaseUser user = mAuth.getCurrentUser();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mAuth = FirebaseAuth.getInstance();
-
-        // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
-        // set Location Request priority
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), GOOGLE_API);
+        }
+
+        locationBlock = findViewById(R.id.locationBlock);
+        requestBlock = findViewById(R.id.requestBlock);
+
+        requestBlock.setVisibility(View.GONE);
+        locationBlock.setVisibility(View.VISIBLE);
+
+        // Set Pick Up Point
+        placesPickUp();
+
+        // Set Drop Off Point
+        placeDropOff();
+
         mLocationRequest = new LocationRequest().setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        // Construct a GeoDataClient.
-//        mGeoDataClient = Places.getGeoDataClient(this, null);
-
-        // Construct a PlaceDetectionClient.
-//        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
-
-        // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // Build the map.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -181,69 +171,225 @@ public class PassengerHome extends AppCompatActivity implements
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
                 R.id.nav_tools, R.id.nav_share, R.id.nav_send)
                 .setDrawerLayout(drawer)
                 .build();
 
-        // Initialize Places.
-        if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), GOOGLE_API);
+        geoLocation = findViewById(R.id.geo_location);
+        geoLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDeviceLocation();
+            }
+        });
+    }
+
+    private void placesPickUp() {
+        textPickUp = findViewById(R.id.textPickUp);
+        textPickUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String status = "PickUp";
+                editTextType(status);
+                onSearchCalled();
+            }
+        });
+
+        textPickUp.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    String status = "PickUp";
+                    editTextType(status);
+                    onSearchCalled();
+                }
+            }
+        });
+    }
+
+    private void placeDropOff() {
+        textDropOffs = findViewById(R.id.textDropOff);
+        textDropOffs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String status = "Dropoff";
+                editTextType(status);
+                onSearchCalled();
+            }
+        });
+
+        textDropOffs.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    String status = "Dropoff";
+                    editTextType(status);
+                    onSearchCalled();
+                }
+            }
+        });
+    }
+
+    private void editTextType(String status) {
+        EDIT_TEXT_TYPE = status;
+    }
+
+    private void onSearchCalled() {
+        // Set the fields to specify which types of place data to return.
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.FULLSCREEN, fields).setCountry("KE")
+                .build(this);
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+    }
+
+    private void drawDirections() {
+        if (DEST_LTNG != null && ORIG_LTNG != null) {
+            mMap.clear();
+            googleMapsUISetting(mMap);
+
+            DirectionsResult directionsResult = tajiDirections
+                    .getDirectionsDetails(ORIG_LTNG, DEST_LTNG, TravelMode.DRIVING);
+
+            if (directionsResult != null) {
+                tajiDirections.addPolyline(directionsResult, mMap);
+                tajiDirections.positionCamera(directionsResult.routes[overview], mMap);
+                tajiDirections.addMarkersToMap(directionsResult, mMap);
+            }
+
+            DISTANCE = tajiDirections.distanceInMeters(directionsResult);
+
+            TextView fromDisp, toDisp, distanceCovered, costDisp;
+            fromDisp = findViewById(R.id.fromDisp);
+            toDisp = findViewById(R.id.toDisp);
+            distanceCovered = findViewById(R.id.distanceCovered);
+            costDisp = findViewById(R.id.costDisp);
+
+            fromDisp.setText("From: " + ORIG_NAME);
+            toDisp.setText("To: " + DEST_NAME);
+            distanceCovered.setText(DISTANCE);
+            costDisp.setText(tajiDirections.costCalculator(DISTANCE));
+
+            requestBlock.setVisibility(View.VISIBLE);
+            locationBlock.setVisibility(View.GONE);
+
+            changeMarginBottom();
+        }
+    }
+
+    private void changeMarginBottom() {
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)
+                geoLocation.getLayoutParams();
+        layoutParams.setMargins(0, 0, 0,300 );
+        geoLocation.setLayoutParams(layoutParams);
+    }
+
+    private void googleMapsUISetting(GoogleMap mMap) {
+        mMap.setBuildingsEnabled(true);
+        mMap.setIndoorEnabled(true);
+        mMap.setTrafficEnabled(false);
+
+        UiSettings mUiSettings = mMap.getUiSettings();
+
+        mUiSettings.setZoomControlsEnabled(true);
+        mUiSettings.setCompassEnabled(true);
+        mUiSettings.setMyLocationButtonEnabled(false);
+        mUiSettings.setScrollGesturesEnabled(true);
+
+        mUiSettings.setZoomGesturesEnabled(true);
+        mUiSettings.setTiltGesturesEnabled(true);
+        mUiSettings.setRotateGesturesEnabled(true);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (EDIT_TEXT_TYPE.equalsIgnoreCase("Pickup") || EDIT_TEXT_TYPE.equalsIgnoreCase("Dropoff")) {
+            if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+                if (resultCode == RESULT_OK) {
+                    Place place = Autocomplete.getPlaceFromIntent(data);
+                    Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+
+                    if (EDIT_TEXT_TYPE.equalsIgnoreCase("Pickup")) {
+                       // Pick Up Latlng
+                       ORIG_LTNG = place.getLatLng();
+                       ORIG_NAME = place.getName();
+
+                       textPickUp.setText(ORIG_NAME);
+                    }
+
+                    if (EDIT_TEXT_TYPE.equalsIgnoreCase("Dropoff")) {
+                        // Drop Off Latlng
+                        DEST_LTNG = place.getLatLng();
+                        DEST_NAME = place.getName();
+
+                        textDropOffs.setText(DEST_NAME);
+                    }
+
+                    // Draw Directions
+                    drawDirections();
+                } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                    // TODO: Handle the error.
+                    Status status = Autocomplete.getStatusFromIntent(data);
+                    Log.i(TAG, status.getStatusMessage());
+                } else if (resultCode == RESULT_CANCELED) {
+                    // The user canceled the operation.
+                }
+            }
+        } else {
+            switch (requestCode) {
+                // Check for the integer request code originally supplied to startResolutionForResult().
+                case REQUEST_CHECK_SETTINGS:
+                    switch (resultCode) {
+                        case Activity.RESULT_OK:
+                            getDeviceLocation();
+                        break;
+
+                        case Activity.RESULT_CANCELED:
+                            settingsRequest();//keep asking if imp or do whatever
+                        break;
+                    }
+                break;
+            }
+        }
+    }
+
+    private void checkFirebaseSession(FirebaseUser user) {
+        if (user == null) {
+            //Return to SignInActivity
+            Intent intent = new Intent(PassengerHome.this, SignInActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
 
-        PlacesClient placesClient = Places.createClient(this);
+        if (requestBlock.getVisibility() == View.VISIBLE) {
+            requestBlock.setVisibility(View.GONE);
+            locationBlock.setVisibility(View.VISIBLE);
 
-        AutocompleteSupportFragment pickUpAutoComplete = (AutocompleteSupportFragment)
-                getSupportFragmentManager().findFragmentById(R.id.places_pick_up);
-
-        AutocompleteSupportFragment destinationAutoComplete = (AutocompleteSupportFragment)
-                getSupportFragmentManager().findFragmentById(R.id.places_destination);
-
-        pickUpAutoComplete.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-        destinationAutoComplete.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
-//        pickUpAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                // TODO: Get info about the selected place.
-////                txtView.setText(place.getName()+","+place.getId());
-//                Log.e(TAG, "Place: " + place.getName() + ", " + place.getId());
-//                Snackbar.make(findViewById(R.id.home_fragment), "Place Selected: " + place.getId() , Snackbar.LENGTH_LONG).show();
-//
-//                getDeviceLocation();
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                // TODO: Handle the error.
-//                Log.e(TAG, "An error occurred: " + status);
-//                Snackbar.make(findViewById(R.id.home_fragment), "An error occurred: " + status , Snackbar.LENGTH_LONG).show();
-//
-//                getDeviceLocation();
-//
-//            }
-//        });
-//
-//        destinationAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                // TODO: Get info about the selected place.
-////                txtView.setText(place.getName()+","+place.getId());
-//                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-//                Snackbar.make(findViewById(R.id.home_fragment), "An error occurred: " + place.getId() , Snackbar.LENGTH_LONG).show();
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                // TODO: Handle the error.
-//                Log.i(TAG, "An error occurred: " + status);
-//                Snackbar.make(findViewById(R.id.home_fragment), "An error occurred: " + status , Snackbar.LENGTH_LONG).show();
-//            }
-//        });
+            super.onBackPressed();
+        } else {
+            super.onBackPressed();
+        }
     }
+
+
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -259,47 +405,25 @@ public class PassengerHome extends AppCompatActivity implements
                 || super.onSupportNavigateUp();
     }
 
-    private void checkFirebaseSession(FirebaseUser user) {
-        if (user != null) {
-            // Do nothing
 
-        } else{
-            //Return to SignInActivity
-            Intent intent = new Intent(PassengerHome.this, SignInActivity.class);
-            startActivity(intent);
-            finish();
-        }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        return false;
     }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Use a custom info window adapter to handle multiple lines of text in the
-        // info window contents.
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+        boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
+                .getString(R.string.google_maps_theme)));
 
-            @Override
-            // Return null here, so that getInfoContents() is called next.
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                // Inflate the layouts for the info window, title and snippet.
-                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                        (FrameLayout) findViewById(R.id.map_fragment), false);
-
-                TextView title = (infoWindow.findViewById(R.id.title));
-                title.setText(marker.getTitle());
-
-                TextView snippet = (infoWindow.findViewById(R.id.snippet));
-                snippet.setText(marker.getSnippet());
-
-                return infoWindow;
-            }
-        });
+        if (!success) {
+            Log.e(TAG, "==========================Style parsing failed.");
+        }
 
         // Prompt the user for permission.
         getLocationPermission();
@@ -307,24 +431,8 @@ public class PassengerHome extends AppCompatActivity implements
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
-        // Get the current location of the device and set the position of the map.
+        // Get Current Location of Device
         getDeviceLocation();
-
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-        return false;
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     /**
@@ -340,91 +448,9 @@ public class PassengerHome extends AppCompatActivity implements
     }
 
     /**
-     * Prompts the user to select the current place from a list of likely places, and shows the
-     * current place on the map - provided the user has granted location permission.
-     */
-   /* private void showCurrentPlace() {
-        if (mMap == null) {
-            return;
-        }
-
-        if (mLocationPermissionGranted) {
-            // Get the likely places - that is, the businesses and other points of interest that
-            // are the best match for the device's current location.
-            @SuppressWarnings("MissingPermission") final Task<PlaceLikelihoodBufferResponse> placeResult =
-                    mPlaceDetectionClient.getCurrentPlace(null);
-            placeResult.addOnCompleteListener
-                    (new OnCompleteListener<PlaceLikelihoodBufferResponse>() {
-                        @Override
-                        public void onComplete(@NonNull Task<PlaceLikelihoodBufferResponse> task) {
-                            if (task.isSuccessful() && task.getResult() != null) {
-                                PlaceLikelihoodBufferResponse likelyPlaces = task.getResult();
-
-                                // Set the count, handling cases where less than 5 entries are returned.
-                                int count;
-                                if (likelyPlaces.getCount() < M_MAX_ENTRIES) {
-                                    count = likelyPlaces.getCount();
-                                } else {
-                                    count = M_MAX_ENTRIES;
-
-                                }
-
-                                int i = 0;
-                                mLikelyPlaceNames = new String[count];
-                                mLikelyPlaceAddresses = new String[count];
-                                mLikelyPlaceAttributions = new String[count];
-                                mLikelyPlaceLatLngs = new LatLng[count];
-
-                                for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                                    // Build a list of likely places to show the user.
-                                    mLikelyPlaceNames[i] = (String) placeLikelihood.getPlace().getName();
-                                    mLikelyPlaceAddresses[i] = (String) placeLikelihood.getPlace()
-                                            .getAddress();
-                                    mLikelyPlaceAttributions[i] = (String) placeLikelihood.getPlace()
-                                            .getAttributions();
-                                    mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-
-                                    i++;
-                                    if (i > (count - 1)) {
-                                        break;
-                                    }
-                                }
-
-                                // Release the place likelihood buffer, to avoid memory leaks.
-                                likelyPlaces.release();
-
-                                // Show a dialog offering the user the list of likely places, and add a
-                                // marker at the selected place.
-                                openPlacesDialog();
-
-                            } else {
-                                Log.e(TAG, "Exception: %s", task.getException());
-                            }
-                        }
-                    });
-        } else {
-            // The user has not granted permission.
-            Log.i(TAG, "The user did not grant location permission.");
-
-            // Add a default marker, because the user hasn't selected a place.
-            mMap.addMarker(new MarkerOptions()
-                    .title(getString(R.string.default_info_title))
-                    .position(mDefaultLocation)
-                    .snippet(getString(R.string.default_info_snippet)));
-
-            // Prompt the user for permission.
-            getLocationPermission();
-        }
-    }*/
-
-    /**
      * Gets the current location of the device, and positions the map's camera.
      */
     public void getDeviceLocation() {
-        /*
-         * Get the best and most recent location of the device, which may be null in rare
-         * cases when a location is not available.
-         */
         try {
             if (mLocationPermissionGranted) {
                 Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
@@ -433,32 +459,25 @@ public class PassengerHome extends AppCompatActivity implements
                     @Override
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful() && task.getResult() != null) {
-
-//                            Snackbar mySnackbar = Snackbar.make(findViewById(R.id.geo_location),
-//                                    "Getting your location..." , Snackbar.LENGTH_LONG);
-//                            mySnackbar.show();
-
-                            // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = task.getResult();
-                            //mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLastKnownLocation.getLatitude(),
-                            //      mLastKnownLocation.getLongitude())));
+
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(),
                                     mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
 
-                            // Set the location to conserve power
+                            Log.e(TAG, "====================================" + mLastKnownLocation);
+
                             mLocationRequest = new LocationRequest();
                             mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
 
-//                            Snackbar mySnackbar = Snackbar.make(findViewById(R.id.geo_location),
-//                                    "Location is off. Using the default location..." , Snackbar.LENGTH_LONG);
-//                            mySnackbar.show();
-
                             mMap.animateCamera(CameraUpdateFactory
                                     .newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
-                            //mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+                            enableLoc();
+
                         }
                     }
                 });
@@ -509,8 +528,255 @@ public class PassengerHome extends AppCompatActivity implements
     }
 
     /**
-     * Displays a form allowing the user to select a place from a list of likely places.
+     * Updates the map's UI settings based on whether the user has granted location permission.
      */
+    private void updateLocationUI() {
+        if (mMap == null) {
+            return;
+        }
+
+        try {
+            if (mLocationPermissionGranted) {
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            } else {
+                mMap.setMyLocationEnabled(false);
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                mLastKnownLocation = null;
+                getLocationPermission();
+            }
+        } catch (Exception e)  {
+            Log.e("Exception: %s", e.getMessage());
+        }
+    }
+
+    protected void createLocationRequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+
+        SettingsClient client = LocationServices.getSettingsClient(this);
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                // All location settings are satisfied. The client can initialize
+                // location requests here.
+                // ...
+            }
+        });
+
+        task.addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (e instanceof ResolvableApiException) {
+                    // Location settings are not satisfied, but this can be fixed
+                    // by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                        resolvable.startResolutionForResult(PassengerHome.this,
+                                REQUEST_CHECK_SETTINGS);
+                    } catch (IntentSender.SendIntentException sendEx) {
+                        // Ignore the error.
+                    }
+                }
+            }
+        });
+
+    }
+
+    public void settingsRequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true); //this is the key ingredient
+
+        GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .build();
+
+
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state = result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            status.startResolutionForResult(PassengerHome.this, REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        break;
+                }
+            }
+        });
+    }
+
+    private boolean hasGPSDevice(Context context) {
+        final LocationManager mgr = (LocationManager) context
+                .getSystemService(Context.LOCATION_SERVICE);
+        if (mgr == null)
+            return false;
+
+        final List<String> providers = mgr.getAllProviders();
+
+        if (providers == null)
+            return false;
+
+        return providers.contains(LocationManager.GPS_PROVIDER);
+    }
+
+    private void enableLoc() {
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(PassengerHome.this)
+            .addApi(LocationServices.API)
+            .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                @Override
+                public void onConnected(Bundle bundle) {
+
+                }
+
+                @Override
+                public void onConnectionSuspended(int i) {
+                    googleApiClient.connect();
+                }
+            })
+            .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                @Override
+                public void onConnectionFailed(ConnectionResult connectionResult) {
+
+                    Log.d("Location error","Location error " + connectionResult.getErrorCode());
+                }
+            }).build();
+
+            googleApiClient.connect();
+
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            locationRequest.setInterval(30 * 1000);
+            locationRequest.setFastestInterval(5 * 1000);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(locationRequest);
+
+            builder.setAlwaysShow(true);
+
+            PendingResult<LocationSettingsResult> result =
+                    LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(LocationSettingsResult result) {
+                    final Status status = result.getStatus();
+                    switch (status.getStatusCode()) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            try {
+                                // Show the dialog by calling startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                status.startResolutionForResult(PassengerHome.this, REQUEST_LOCATION);
+                                getDeviceLocation();
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            }
+                            break;
+                    }
+                }
+            });
+        }
+    }
+
+    public void changeBlock() {
+        if (DEST_LTNG != null && ORIG_LTNG != null) {
+            TextView origPlace, destPlace;
+
+            origPlace = findViewById(R.id.origin_place);
+            destPlace = findViewById(R.id.dest_place);
+
+            origPlace.setText(ORIG_NAME);
+            destPlace.setText(DEST_NAME);
+
+            Button requestRide = findViewById(R.id.request_ride);
+
+            requestRide.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ProgressDialog mProgressDialog;
+                    mProgressDialog = new ProgressDialog(getApplicationContext());
+
+                    if (mProgressDialog == null) {
+                        mProgressDialog.setMessage("Requesting");
+                        mProgressDialog.setIndeterminate(true);
+                        mProgressDialog.setCanceledOnTouchOutside(false);
+                        mProgressDialog.setCancelable(false);
+                    }
+
+                    mProgressDialog.show();
+                }
+            });
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+//        String email = user.getEmail();
+//
+//        // Get the collection reference
+//        DocumentReference documentReference = db.collection("passengers").document(email);
+//        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    DocumentSnapshot document = task.getResult();
+//
+//                    if (document.exists()) {
+//                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+//                    } else {
+//                        Log.d(TAG, "No such document");
+//                    }
+//                } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+//                }
+//            }
+//        });
+
+
+/*
+    */
+/**
+     * Displays a form allowing the user to select a place from a list of likely places.
+     *//*
+
     private void openPlacesDialog() {
         // Ask the user to choose the place where they are now.
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
@@ -541,28 +807,4 @@ public class PassengerHome extends AppCompatActivity implements
                 .setTitle(R.string.pick_place)
                 .setItems(mLikelyPlaceNames, listener)
                 .show();
-    }
-
-    /**
-     * Updates the map's UI settings based on whether the user has granted location permission.
-     */
-    private void updateLocationUI() {
-        if (mMap == null) {
-            return;
-        }
-
-        try {
-            if (mLocationPermissionGranted) {
-                mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            } else {
-                mMap.setMyLocationEnabled(false);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                mLastKnownLocation = null;
-                getLocationPermission();
-            }
-        } catch (SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
-        }
-    }
-}
+    }*/

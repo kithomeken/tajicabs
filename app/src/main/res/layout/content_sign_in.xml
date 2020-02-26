@@ -150,7 +150,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/accountSignUp"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:background="@android:color/transparent"
                     android:textColor="@color/colorPrimaryDark"
@@ -163,7 +163,7 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/aboutTaji"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:layout_marginTop="@dimen/dim_15"
                     android:layout_marginBottom="@dimen/dim_15"
@@ -178,6 +178,19 @@
             </LinearLayout>
 
         </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ffffff"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="false"
+            android:id="@+id/dragView">
+
+
+
+        </LinearLayout>
 
     </LinearLayout>
 

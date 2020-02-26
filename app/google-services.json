@@ -1,34 +1,77 @@
 {
   "project_info": {
-    "project_number": "920131620339",
-    "firebase_url": "https://taji-cab.firebaseio.com",
-    "project_id": "taji-cab",
-    "storage_bucket": "taji-cab.appspot.com"
+    "project_number": "558969717814",
+    "firebase_url": "https://astute-baton-268809.firebaseio.com",
+    "project_id": "astute-baton-268809",
+    "storage_bucket": "astute-baton-268809.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:920131620339:android:2371e9478f8c8fa8031686",
+        "mobilesdk_app_id": "1:558969717814:android:732bfceacf9979a8f60497",
         "android_client_info": {
           "package_name": "com.tajicabs"
         }
       },
       "oauth_client": [
         {
-          "client_id": "920131620339-ikfnlrcdg4tqs029nr841vqc7g926rpl.apps.googleusercontent.com",
+          "client_id": "558969717814-0uv7au5ngk7petfprs957c3e868hqko6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tajicabs",
+            "certificate_hash": "dcf86deb8da9a63d17f0141c3496c6b8bd9da73d"
+          }
+        },
+        {
+          "client_id": "558969717814-rno7hkqol0arj31ho5202aorlj9gsiqo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBMxutYwv52sgKnyFT5dNri82h1BjT1KzY"
+          "current_key": "AIzaSyCPbndZg5OJM9uzhunYFVrwT6hl1ly1-C8"
+        },
+        {
+          "current_key": "AIzaSyAomMJK1Usqa6OPQv4CFrae9oY7s-gpFpM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "920131620339-ikfnlrcdg4tqs029nr841vqc7g926rpl.apps.googleusercontent.com",
+              "client_id": "558969717814-rno7hkqol0arj31ho5202aorlj9gsiqo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:558969717814:android:016def1b9062fdb1f60497",
+        "android_client_info": {
+          "package_name": "com.tajidriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "558969717814-rno7hkqol0arj31ho5202aorlj9gsiqo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPbndZg5OJM9uzhunYFVrwT6hl1ly1-C8"
+        },
+        {
+          "current_key": "AIzaSyAomMJK1Usqa6OPQv4CFrae9oY7s-gpFpM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "558969717814-rno7hkqol0arj31ho5202aorlj9gsiqo.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
