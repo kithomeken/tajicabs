@@ -110,10 +110,10 @@ public class TajiDirections {
 
     public String distanceInMeters(DirectionsResult results) {
         String distanceStr = "" + results.routes[overview].legs[overview].distance.inMeters;
-        double distance = Integer.parseInt(distanceStr);
+        double distance = Double.parseDouble(distanceStr);
 
         distance = distance / 1000;
-        distance = (double) Math.round(distance);
+        distance = Math.round(distance * 100.0) / 100.0;
         distanceStr = "" + distance;
 
         return distanceStr;
@@ -123,9 +123,9 @@ public class TajiDirections {
         // Calculate Cost
         double cost;
         int baseDistance = 2;
-        int baseCost = 150;
+        int baseCost = 200;
         double distance = Double.parseDouble(distanceStr);
-        int additionalAmount = 30;
+        int additionalAmount = 50;
 
         double extra = distance - baseDistance;
 

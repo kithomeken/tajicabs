@@ -58,8 +58,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.4.0'
     implementation "androidx.cardview:cardview:1.0.0"
 
-    // Firebase In-App Messaging and Analytics dependencies:
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.3'
+    // Firebase Messaging
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
+    implementation 'android.arch.work:work-runtime:1.0.1'
+    implementation 'com.google.firebase:firebase-iid:20.0.2'
 
     //  Google Play Services
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
@@ -70,4 +72,18 @@ dependencies {
 
     //  Google Sign In SDK
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+
+    // Volley
+    implementation 'com.android.volley:volley:1.1.0'
+
+    // Draw GIF
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.3'
+
+    // Room Dependencies
+    def room_version = "2.2.4"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    testImplementation "androidx.room:room-testing:$room_version"
+
 }

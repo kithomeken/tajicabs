@@ -1,5 +1,6 @@
 package com.tajicabs.passengers;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -34,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -56,28 +58,40 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import com.tajicabs.R;
 import com.tajicabs.directions.TajiDirections;
+import com.tajicabs.services.MessagingServices;
+import com.tajicabs.services.RegisterToken;
+import com.tajicabs.services.RequestServices;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static com.tajicabs.configuration.TajiCabs.ACTIVITY_STATE;
+import static com.tajicabs.configuration.TajiCabs.COST;
 import static com.tajicabs.configuration.TajiCabs.DEFAULT_ZOOM;
 import static com.tajicabs.configuration.TajiCabs.DEST_LTNG;
 import static com.tajicabs.configuration.TajiCabs.DEST_NAME;
@@ -96,11 +110,13 @@ public class PassengerHome extends AppCompatActivity implements
     // Dependency classes
     TajiDirections tajiDirections = new TajiDirections();
 
+    private FirebaseAuth mAuth;
+    private FirebaseUser firebaseUser;
+
     protected static final int overview = 0;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     private AppBarConfiguration mAppBarConfiguration;
-    private FirebaseAuth mAuth;
     private GoogleMap mMap;
     private LocationRequest mLocationRequest;
 
@@ -119,8 +135,11 @@ public class PassengerHome extends AppCompatActivity implements
     private LinearLayout requestBlock, locationBlock;
     private FloatingActionButton geoLocation;
     private EditText textPickUp, textDropOffs;
+    private Button requestRide, cancelRide;
 
-    private static String EDIT_TEXT_TYPE;
+    private static String EDIT_TEXT_TYPE = "E";
+    private View requestRidePopUp;
+    private TextView fromDisp, toDisp, distanceCovered, costDisp;
 
 
     @Override
@@ -135,7 +154,9 @@ public class PassengerHome extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passenger_home);
+
         mAuth = FirebaseAuth.getInstance();
+        firebaseUser = mAuth.getCurrentUser();
 
         if (savedInstanceState != null) {
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
@@ -169,7 +190,22 @@ public class PassengerHome extends AppCompatActivity implements
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        // Set display name, photo url and email address of signed in user
+        View navHeaderView = navigationView.getHeaderView(0);
+        TextView accountName = (TextView) navHeaderView.findViewById(R.id.accountName);
+        TextView accountEmail = (TextView) navHeaderView.findViewById(R.id.accountEmail);
+
+        assert firebaseUser != null;
+        accountName.setText(firebaseUser.getDisplayName());
+        accountEmail.setText(firebaseUser.getEmail());
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
@@ -184,6 +220,8 @@ public class PassengerHome extends AppCompatActivity implements
                 getDeviceLocation();
             }
         });
+
+        requestRideAction();
     }
 
     private void placesPickUp() {
@@ -262,7 +300,6 @@ public class PassengerHome extends AppCompatActivity implements
 
             DISTANCE = tajiDirections.distanceInMeters(directionsResult);
 
-            TextView fromDisp, toDisp, distanceCovered, costDisp;
             fromDisp = findViewById(R.id.fromDisp);
             toDisp = findViewById(R.id.toDisp);
             distanceCovered = findViewById(R.id.distanceCovered);
@@ -386,6 +423,71 @@ public class PassengerHome extends AppCompatActivity implements
         }
     }
 
+    private void requestRideAction() {
+        // Request Ride Action
+        requestRide = findViewById(R.id.requestRide);
+        requestRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideKeyboard(v);
+                showRequestPopUp(v);
+            }
+        });
+    }
+
+    public void hideKeyboard(View view) {
+        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    private void showRequestPopUp(View view){
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        requestRidePopUp = layoutInflater.inflate(R.layout.modal_request_ride, null);
+
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(requestRidePopUp, width, height, focusable);
+        popupWindow.setElevation(8);
+
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        requestRidePopUp.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                popupWindow.isShowing();
+                return true;
+            }
+        });
+
+        // Request Ride
+        requestRideNotification();
+
+        cancelRideAction();
+    }
+
+    private void cancelRideAction() {
+        cancelRide = requestRidePopUp.findViewById(R.id.cancelRequest);
+        cancelRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void requestRideNotification() {
+        ACTIVITY_STATE = 702;
+        String email = firebaseUser.getEmail();
+        COST = costDisp.getText().toString();
+
+        RequestServices requestServices = new RequestServices(getApplicationContext());
+        requestServices.requestRide(email);
+    }
 
 
 

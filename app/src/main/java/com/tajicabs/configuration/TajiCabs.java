@@ -11,7 +11,7 @@ public class TajiCabs {
     public static String IDNUM;
     public static String PHONE;
 
-    public final static String GOOGLE_API = "AIzaSyAxLhVQdc7JXdSXcG5L_-fgwh_WcDtAeMY";
+    public final static String GOOGLE_API = "AIzaSyAAiRrbL3TId8hGBTVwLNj1-TI43ldIDcs";
 
     public static LatLng ORIG_LTNG = null;
     public static String ORIG_NAME = null;
@@ -19,7 +19,10 @@ public class TajiCabs {
     public static String DEST_NAME = null;
 
     public static String DISTANCE = null;
+    public static String COST = null;
 
     public static final int DEFAULT_ZOOM = 18;
     public static final int REQUEST_LOCATION = 199;
+
+    public static int ACTIVITY_STATE = 0;
 }

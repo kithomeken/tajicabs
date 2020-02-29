@@ -54,6 +54,10 @@
     <string name="dest">To:</string>
     <string name="request_ride">Request Ride</string>
     <string name="title_activity_basic">BasicActivity</string>
+    <string name="default_notification_channel_id">fcm_default_channel</string>
+    <string name="fcm_message">Firebase Cloud Message</string>
+    <string name="cancel_request">Cancel Request</string>
+    <string name="find_driver">Finding a driver new you</string>
 
 
 </resources>
