@@ -1,9 +1,8 @@
 package com.tajicabs.passengers;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -14,8 +13,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.tajicabs.R;
 import com.tajicabs.configuration.Firebase;
+import com.tajicabs.services.MessagingServices;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -25,12 +27,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.tajicabs.configuration.TajiCabs.EMAIL;
+import static com.tajicabs.configuration.TajiCabs.NAMES;
 import static com.tajicabs.configuration.TajiCabs.PASSENGER_DETAILS;
+import static com.tajicabs.configuration.TajiCabs.PHONE;
 
 public class SignUpActivity extends Firebase implements View.OnClickListener {
     private static final String TAG = "Sign Up Activity";
@@ -163,20 +167,20 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
             passwordText.setError(null);
         }
 
-//        String confirmPwd = confirmText.getText().toString();
-//        if (TextUtils.isEmpty(confirmPwd)) {
-//            confirmText.setError("Required.");
-//            valid = false;
-//        } else {
-//            confirmText.setError(null);
-//        }
-//
-//        if (!password.equals(confirmPwd)) {
-//            passwordText.setError("Passwords Do Not Match");
-//            valid = false;
-//        } else {
-//            passwordText.setError(null);
-//        }
+       String confirmPwd = confirmText.getText().toString();
+       if (TextUtils.isEmpty(confirmPwd)) {
+           confirmText.setError("Required.");
+           valid = false;
+       } else {
+           confirmText.setError(null);
+       }
+
+       if (!password.equals(confirmPwd)) {
+           passwordText.setError("Passwords Do Not Match");
+           valid = false;
+       } else {
+           passwordText.setError(null);
+       }
 
         return valid;
     }
@@ -197,58 +201,7 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
                     // Sign up success, update UI with the signed-in user's information
                     Log.i(TAG, "createUserWithEmail:success");
 
-                    // Add user's Details to Firestore DB
-                    // Collection - passengers
-                    String email = email();
-                    String firstName = firstName();
-                    final String lastName = lastName();
-                    String strId = idNumber();
-                    String phoneNumber = phoneNumber();
-
-                    int idNumber = Integer.parseInt(strId);
-                    CollectionReference passengers = db.collection("passengers");
-
-                    Map<String, Object> userDetails = new HashMap<>();
-                    userDetails.put("email", email);
-                    userDetails.put("first_name", firstName);
-                    userDetails.put("last_name", lastName);
-                    userDetails.put("id_number", idNumber);
-                    userDetails.put("phone_number", phoneNumber);
-
-                    passengers.document(email).set(userDetails)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isComplete() || task.isSuccessful()) {
-                                Log.i(TAG, "Passenger Data Created");
-                                STATUS = "Success";
-
-                                SharedPreferences sharedPreferences;
-
-                                String email = emailText.getText().toString();
-                                String phone = phoneText.getText().toString();
-                                String idNum = idText.getText().toString();
-                                String names = firstText.getText().toString() + " " + lastText.getText().toString();
-
-                                sharedPreferences = getApplicationContext().getSharedPreferences(PASSENGER_DETAILS, 0);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                                editor.putString("EMAIL", email);
-                                editor.putString("PHONE", phone);
-                                editor.putString("ID_NUM", idNum);
-                                editor.putString("NAMES", names);
-                                editor.apply();
-
-                                FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                                updateUI(firebaseUser);
-                            } else {
-                                Log.i(TAG, "Something went wrong: " + task.getException());
-                                STATUS = "Failed";
-
-                                updateUI(null);
-                            }
-                        }
-                    });
+                    registerFirebaseTokens();
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.i(TAG, "createUserWithEmail:failure", task.getException());
@@ -263,6 +216,49 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
                 }
 
                 hideProgressDialog();
+            }
+        });
+    }
+
+    private void registerFirebaseTokens() {
+        Log.i(TAG, "Firebase Instance Created");
+        STATUS = "Success";
+
+        SharedPreferences sharedPreferences;
+
+        String email = email();
+        String phone = phoneNumber();
+        String idNum = idNumber();
+        String names =firstName() + " " + lastName();
+
+        sharedPreferences = getApplicationContext().getSharedPreferences(PASSENGER_DETAILS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString("EMAIL", email);
+        editor.putString("PHONE", phone);
+        editor.putString("ID_NUM", idNum);
+        editor.putString("NAMES", names);
+        editor.apply();
+
+        // Firebase Messaging Token Registration
+        FirebaseInstanceId.getInstance().getInstanceId()
+        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    Log.e(TAG, "Getting Firebase InstanceId failed", task.getException());
+                    return;
+                }
+
+                // Get new Instance ID token
+                String token = task.getResult().getToken();
+                Log.i(TAG, "Firebase InstanceId Token: " +  token);
+
+                MessagingServices messagingService =  new MessagingServices();
+                Context context = getApplicationContext();
+                messagingService.onNewToken(token, context);
+
+                // Finish Sign In Activity
             }
         });
     }

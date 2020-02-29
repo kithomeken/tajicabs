@@ -1,5 +1,6 @@
 package com.tajicabs.passengers;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,8 +17,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.tajicabs.R;
 import com.tajicabs.configuration.Firebase;
+import com.tajicabs.services.MessagingServices;
+
+import static com.tajicabs.configuration.TajiCabs.EMAIL;
 
 
 public class SignInActivity extends Firebase implements View.OnClickListener {
@@ -110,8 +116,34 @@ public class SignInActivity extends Firebase implements View.OnClickListener {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "Firebase Signing In: success");
 
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    updateUI(user);
+                    // Firebase Messaging Token Registration
+                    FirebaseInstanceId.getInstance().getInstanceId()
+                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e(TAG, "XXXXXXXXXXXXXXXXXXXXXXXXXX getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+                            EMAIL = email();
+
+                        // Log and toast
+                        Log.d(TAG, "XXXXXXXXXXXXXXXXXXXXXXXXX " +  token);
+
+                        MessagingServices messagingService =  new MessagingServices();
+                        Context context = getApplicationContext();
+                        messagingService.onNewToken(token, context);
+
+                        Intent intent = new Intent(SignInActivity.this, PassengerHome.class);
+                        startActivity(intent);
+
+                        hideProgressDialog();
+                        finish();
+                        }
+                    });
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "Firebase Signing In: Failed", task.getException());
@@ -141,5 +173,9 @@ public class SignInActivity extends Firebase implements View.OnClickListener {
 
             hideProgressDialog();
         }
+    }
+
+    private String email() {
+        return emailText.getText().toString();
     }
 }

@@ -29,7 +29,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCPbndZg5OJM9uzhunYFVrwT6hl1ly1-C8"
+          "current_key": "AIzaSyBW1aFQPrtOLabYdSo5eEFR4gxQ0cUipAU"
         },
         {
           "current_key": "AIzaSyAomMJK1Usqa6OPQv4CFrae9oY7s-gpFpM"
@@ -39,7 +39,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "558969717814-rno7hkqol0arj31ho5202aorlj9gsiqo.apps.googleusercontent.com",
+              "client_id": "105330182567967177197",
               "client_type": 3
             }
           ]
@@ -55,13 +55,21 @@
       },
       "oauth_client": [
         {
+          "client_id": "558969717814-549hedf96mp4id4b3e8di3n2gcl98llu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tajidriver",
+            "certificate_hash": "dcf86deb8da9a63d17f0141c3496c6b8bd9da73d"
+          }
+        },
+        {
           "client_id": "558969717814-rno7hkqol0arj31ho5202aorlj9gsiqo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCPbndZg5OJM9uzhunYFVrwT6hl1ly1-C8"
+          "current_key": "AIzaSyBW1aFQPrtOLabYdSo5eEFR4gxQ0cUipAU"
         },
         {
           "current_key": "AIzaSyAomMJK1Usqa6OPQv4CFrae9oY7s-gpFpM"
@@ -71,7 +79,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "558969717814-rno7hkqol0arj31ho5202aorlj9gsiqo.apps.googleusercontent.com",
+              "client_id": "105330182567967177197",
               "client_type": 3
             }
           ]
