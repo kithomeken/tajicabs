@@ -3,8 +3,22 @@ package com.tajicabs.configuration;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 public class TajiCabs {
     public final static String PASSENGER_DETAILS = "PASSENGER_DETAILS";
+    public static String ERROR_CODE;
+
+    public static String FIREBASE_TOKEN = null;
+
+
+
+
+    public static CookieStore APP_CLIENT_COOKIE = new BasicCookieStore();
+    public static HttpClient APP_HTTP_CLIENT = new DefaultHttpClient();
 
     public static String EMAIL;
     public static String NAMES;
@@ -25,4 +39,11 @@ public class TajiCabs {
     public static final int REQUEST_LOCATION = 199;
 
     public static int ACTIVITY_STATE = 0;
+
+    public static String DR_NAME = null;
+    public static String DR_PHONE = null;
+    public static String DR_REG = null;
+    public static String DR_MAKE = null;
+
+    public static String DR_TOKEN = null;
 }

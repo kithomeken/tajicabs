@@ -46,6 +46,7 @@
             android:layout_height="60dp"
             android:paddingStart="@dimen/dim_10"
             android:paddingEnd="@dimen/dim_10"
+            android:visibility="gone"
             android:layout_marginBottom="@dimen/dim_10"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -109,7 +110,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         tools:ignore="MissingConstraints">
 
         <RelativeLayout
@@ -328,6 +329,150 @@
                 android:background="@color/colorPrimaryDark"
                 android:textColor="@android:color/white"
                 android:text="@string/request_ride"
+                android:layout_gravity="center"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/driverBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:paddingStart="@dimen/dim_10"
+            android:paddingEnd="@dimen/dim_10"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="@dimen/dim_10"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:paddingEnd="@dimen/dim_05"
+                android:paddingStart="@dimen/dim_05"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:text="Your driver is on their way..." />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:paddingStart="@dimen/dim_10"
+            android:paddingEnd="@dimen/dim_10"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="@dimen/dim_10"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/driverName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:paddingEnd="@dimen/dim_05"
+                android:paddingStart="@dimen/dim_05"
+                android:textColor="@android:color/black"
+                android:textSize="17sp"
+                android:text="From Githurai Kimbo" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:paddingStart="@dimen/dim_10"
+            android:paddingEnd="@dimen/dim_10"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="@dimen/dim_10"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/driverPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:paddingEnd="@dimen/dim_05"
+                android:paddingStart="@dimen/dim_05"
+                android:textColor="@android:color/black"
+                android:textSize="17sp"
+                android:text="From Githurai Kimbo" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:paddingStart="@dimen/dim_10"
+            android:paddingEnd="@dimen/dim_10"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="@dimen/dim_10"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/vehicleReg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:paddingEnd="@dimen/dim_05"
+                android:paddingStart="@dimen/dim_05"
+                android:textColor="@android:color/black"
+                android:textSize="17sp"
+                android:text="To Kasarani Police Station" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:paddingStart="@dimen/dim_10"
+            android:paddingEnd="@dimen/dim_10"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="@dimen/dim_10"
+            android:layout_marginBottom="@dimen/dim_20"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/vehicleMake"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:paddingEnd="@dimen/dim_05"
+                android:paddingStart="@dimen/dim_05"
+                android:textColor="@android:color/black"
+                android:textSize="17sp"
+                android:text="To Kasarani Police Station" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/cancelRequest"
+                android:layout_width="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_height="wrap_content"
+                android:background="@color/error"
+                android:textColor="@android:color/white"
+                android:text="@string/cancel_request"
                 android:layout_gravity="center"/>
 
         </RelativeLayout>

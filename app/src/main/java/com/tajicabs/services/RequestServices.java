@@ -10,22 +10,30 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.tajicabs.database.AppDatabase;
+import com.tajicabs.database.RWServices;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.tajicabs.configuration.TajiCabs.COST;
 import static com.tajicabs.configuration.TajiCabs.DEST_LTNG;
+import static com.tajicabs.configuration.TajiCabs.DEST_NAME;
+import static com.tajicabs.configuration.TajiCabs.DISTANCE;
 import static com.tajicabs.configuration.TajiCabs.NAMES;
 import static com.tajicabs.configuration.TajiCabs.ORIG_LTNG;
+import static com.tajicabs.configuration.TajiCabs.ORIG_NAME;
 import static com.tajicabs.configuration.TajiCabs.PHONE;
 
 public class RequestServices {
     private static final String TAG = RequestServices.class.getName();
     private Context context;
+    private AppDatabase appDatabase;
 
-    public RequestServices (Context context) {
+    public RequestServices (Context context, AppDatabase appDatabase) {
         this.context = context;
+        this.appDatabase = appDatabase;
     }
 
     public void requestRide(final String email) {
@@ -65,10 +73,28 @@ public class RequestServices {
                 String strOrg = orgLat + "," + orgLng;
                 String strDes = desLat + "," + desLng;
 
+                String lat = String.valueOf(orgLat);
+                String lng = String.valueOf(orgLng);
+
+                String emptyString = "";
+                final String tripId = UUID.randomUUID().toString();
+
                 params.put("origin", strOrg);
                 params.put("destination", strDes);
+                params.put("lat", lat);
+                params.put("lng", lng);
+
+                params.put("distance", DISTANCE);
+                params.put("orig_name", ORIG_NAME);
+                params.put("dest_name", DEST_NAME);
+                params.put("tripId", tripId);
 
                 Log.d(TAG, "=====================================" + params);
+
+                // Create Trip Request
+                RWServices rwServices = new RWServices(appDatabase);
+                rwServices.createTripRequest(tripId, strOrg, strDes, DISTANCE, COST, emptyString,
+                        emptyString, emptyString, emptyString, emptyString);
 
                 return params;
             }
