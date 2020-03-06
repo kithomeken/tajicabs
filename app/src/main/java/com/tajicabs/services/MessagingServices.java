@@ -17,13 +17,9 @@ import androidx.work.WorkManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.tajicabs.R;
+import com.tajicabs.configuration.TajiCabs;
 import com.tajicabs.passengers.PassengerHome;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
 import java.util.Map;
 
 public class MessagingServices extends FirebaseMessagingService implements IRequestListener  {
@@ -76,7 +72,18 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
             Log.e(TAG, "====================Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
-        sendNotification(remoteMessage.getData());
+        Map<String, String> hashMap = remoteMessage.getData();
+        String requestType = hashMap.get("request_type");
+
+        switch (requestType) {
+            case "800":
+                acceptedRequest(remoteMessage.getData());
+            break;
+
+            default:
+                sendNotification(remoteMessage.getData());
+            break;
+        }
     }
 
     /**
@@ -156,6 +163,49 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
         String title = hashMap.get("title");
         String content = hashMap.get("content");
         String action = hashMap.get("action");
+
+        String channelId = getString(R.string.default_notification_channel_id);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.drawable.taji_icon)
+                        .setContentTitle(title)
+                        .setContentText(content)
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
+                        .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    private void acceptedRequest(Map<String, String> hashMap) {
+        Intent intent = new Intent(this, PassengerHome.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        TajiCabs.DR_NAME = hashMap.get("name");
+        TajiCabs.DR_PHONE = hashMap.get("phone_number");
+        TajiCabs.DR_REG = "Vehicle Reg: KCX 000X";
+        TajiCabs.DR_MAKE = "Vehicle Make: Toyota Passo";
+        TajiCabs.DR_TOKEN = hashMap.get("driver_token");
+
+        // Message Breakdown
+        String title = hashMap.get("title");
+        String content = hashMap.get("content");
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

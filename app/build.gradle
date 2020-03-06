@@ -22,6 +22,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude "META-INF/DEPENDENCIES"
+        exclude "META-INF/LICENSE"
+        exclude "META-INF/LICENSE.txt"
+        exclude "META-INF/license.txt"
+        exclude "META-INF/NOTICE"
+        exclude "META-INF/NOTICE.txt"
+        exclude "META-INF/notice.txt"
+        exclude "META-INF/ASL2.0"
+    }
 }
 
 dependencies {
@@ -86,4 +96,9 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
 
+    // Apache Libraries
+    implementation files('libs/httpmime-4.3.1.jar')
+    implementation files('libs/httpcore-4.3.1.jar')
+    implementation files('libs/httpclient-cache-4.3.1.jar')
+    implementation files('libs/httpclient-4.3.1.jar')
 }

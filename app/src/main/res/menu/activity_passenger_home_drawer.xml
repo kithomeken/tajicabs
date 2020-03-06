@@ -7,17 +7,19 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:title="My Profile" />
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:title="My Trips" />
         <item
             android:id="@+id/nav_slideshow"
+            android:visible="false"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/menu_slideshow" />
         <item
             android:id="@+id/nav_tools"
+            android:visible="false"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/menu_tools" />
     </group>
@@ -31,7 +33,7 @@
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send" />
+                android:title="Contact Us" />
         </menu>
     </item>
 

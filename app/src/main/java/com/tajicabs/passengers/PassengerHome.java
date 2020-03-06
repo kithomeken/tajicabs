@@ -32,7 +32,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -58,21 +57,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import com.tajicabs.R;
+import com.tajicabs.database.AppDatabase;
 import com.tajicabs.directions.TajiDirections;
-import com.tajicabs.services.MessagingServices;
-import com.tajicabs.services.RegisterToken;
+import com.tajicabs.geolocation.LocationPool;
 import com.tajicabs.services.RequestServices;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -96,6 +94,11 @@ import static com.tajicabs.configuration.TajiCabs.DEFAULT_ZOOM;
 import static com.tajicabs.configuration.TajiCabs.DEST_LTNG;
 import static com.tajicabs.configuration.TajiCabs.DEST_NAME;
 import static com.tajicabs.configuration.TajiCabs.DISTANCE;
+import static com.tajicabs.configuration.TajiCabs.DR_MAKE;
+import static com.tajicabs.configuration.TajiCabs.DR_NAME;
+import static com.tajicabs.configuration.TajiCabs.DR_PHONE;
+import static com.tajicabs.configuration.TajiCabs.DR_REG;
+import static com.tajicabs.configuration.TajiCabs.DR_TOKEN;
 import static com.tajicabs.configuration.TajiCabs.GOOGLE_API;
 import static com.tajicabs.configuration.TajiCabs.ORIG_LTNG;
 import static com.tajicabs.configuration.TajiCabs.ORIG_NAME;
@@ -109,6 +112,7 @@ public class PassengerHome extends AppCompatActivity implements
 
     // Dependency classes
     TajiDirections tajiDirections = new TajiDirections();
+    LocationPool locationPool;
 
     private FirebaseAuth mAuth;
     private FirebaseUser firebaseUser;
@@ -132,7 +136,7 @@ public class PassengerHome extends AppCompatActivity implements
     private static final String KEY_LOCATION = "location";
     private final int AUTOCOMPLETE_REQUEST_CODE = 1;
 
-    private LinearLayout requestBlock, locationBlock;
+    private LinearLayout requestBlock, locationBlock, driverBlock;
     private FloatingActionButton geoLocation;
     private EditText textPickUp, textDropOffs;
     private Button requestRide, cancelRide;
@@ -140,7 +144,7 @@ public class PassengerHome extends AppCompatActivity implements
     private static String EDIT_TEXT_TYPE = "E";
     private View requestRidePopUp;
     private TextView fromDisp, toDisp, distanceCovered, costDisp;
-
+    private TextView driverName, vehicleMake, vehicleReg, drivePhone;
 
     @Override
     public void onStart() {
@@ -168,9 +172,35 @@ public class PassengerHome extends AppCompatActivity implements
 
         locationBlock = findViewById(R.id.locationBlock);
         requestBlock = findViewById(R.id.requestBlock);
+        driverBlock = findViewById(R.id.driverBlock);
 
-        requestBlock.setVisibility(View.GONE);
-        locationBlock.setVisibility(View.VISIBLE);
+        driverName = findViewById(R.id.driverName);
+        vehicleMake = findViewById(R.id.vehicleMake);
+        vehicleReg = findViewById(R.id.vehicleReg);
+        drivePhone = findViewById(R.id.driverPhone);
+
+        if (DR_TOKEN != null) {
+            // Show Driver Details
+            requestBlock.setVisibility(View.GONE);
+            locationBlock.setVisibility(View.GONE);
+            driverBlock.setVisibility(View.VISIBLE);
+
+            driverAcceptBlock();
+        } else {
+            requestBlock.setVisibility(View.GONE);
+            locationBlock.setVisibility(View.VISIBLE);
+            driverBlock.setVisibility(View.GONE);
+        }
+
+        Button cancelRequest = findViewById(R.id.cancelRequest);
+        cancelRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestBlock.setVisibility(View.GONE);
+                locationBlock.setVisibility(View.VISIBLE);
+                driverBlock.setVisibility(View.GONE);
+            }
+        });
 
         // Set Pick Up Point
         placesPickUp();
@@ -222,6 +252,13 @@ public class PassengerHome extends AppCompatActivity implements
         });
 
         requestRideAction();
+    }
+
+    private void driverAcceptBlock() {
+        driverName.setText("Driver:" + DR_NAME);
+        drivePhone.setText("Phone Number: " + DR_PHONE);
+        vehicleMake.setText(DR_MAKE);
+        vehicleReg.setText(DR_REG);
     }
 
     private void placesPickUp() {
@@ -314,6 +351,9 @@ public class PassengerHome extends AppCompatActivity implements
             locationBlock.setVisibility(View.GONE);
 
             changeMarginBottom();
+
+            // Location Pool
+
         }
     }
 
@@ -467,15 +507,11 @@ public class PassengerHome extends AppCompatActivity implements
         // Request Ride
         requestRideNotification();
 
-        cancelRideAction();
-    }
-
-    private void cancelRideAction() {
         cancelRide = requestRidePopUp.findViewById(R.id.cancelRequest);
         cancelRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                popupWindow.dismiss();
             }
         });
     }
@@ -485,7 +521,9 @@ public class PassengerHome extends AppCompatActivity implements
         String email = firebaseUser.getEmail();
         COST = costDisp.getText().toString();
 
-        RequestServices requestServices = new RequestServices(getApplicationContext());
+        // Application Database Initialization
+        AppDatabase appDatabase = AppDatabase.getDatabase(this);
+        RequestServices requestServices = new RequestServices(getApplicationContext(), appDatabase);
         requestServices.requestRide(email);
     }
 
@@ -520,12 +558,12 @@ public class PassengerHome extends AppCompatActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
-                .getString(R.string.google_maps_theme)));
-
-        if (!success) {
-            Log.e(TAG, "==========================Style parsing failed.");
-        }
+//        boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
+//                .getString(R.string.google_maps_theme)));
+//
+//        if (!success) {
+//            Log.e(TAG, "==========================Style parsing failed.");
+//        }
 
         // Prompt the user for permission.
         getLocationPermission();
@@ -555,7 +593,7 @@ public class PassengerHome extends AppCompatActivity implements
     public void getDeviceLocation() {
         try {
             if (mLocationPermissionGranted) {
-                Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
+                final Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
 
                 locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
                     @Override
@@ -566,10 +604,30 @@ public class PassengerHome extends AppCompatActivity implements
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(),
                                     mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
 
-                            Log.e(TAG, "====================================" + mLastKnownLocation);
+                            Log.e(TAG, "====================================" + mLastKnownLocation.getLatitude());
+                            Log.e(TAG, "====================================" + mLastKnownLocation.getLongitude());
 
                             mLocationRequest = new LocationRequest();
-                            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+                            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY );
+
+                            // Show Location of Other Devices - Drivers
+                            final String latitude = "" + mLastKnownLocation.getLatitude();
+                            final String longitude = "" + mLastKnownLocation.getLongitude();
+
+                            ORIG_LTNG = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+
+                            final Handler ha = new Handler();
+                            ha.postDelayed(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    //call function
+                                    ha.postDelayed(this, 10000);
+
+                                    locationPool = new LocationPool(getApplicationContext(), mMap, latitude, longitude);
+                                    locationPool.locationPoolRequest();
+                                }
+                            }, 10000);
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
@@ -579,7 +637,6 @@ public class PassengerHome extends AppCompatActivity implements
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
                             enableLoc();
-
                         }
                     }
                 });
@@ -696,8 +753,8 @@ public class PassengerHome extends AppCompatActivity implements
 
     public void settingsRequest() {
         LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(30 * 1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest.setInterval(15 * 1000);
         locationRequest.setFastestInterval(5 * 1000);
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest);
