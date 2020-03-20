@@ -12,19 +12,19 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.database.RWServices;
+import com.tajicabs.global.Variables;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.tajicabs.configuration.TajiCabs.COST;
-import static com.tajicabs.configuration.TajiCabs.DEST_LTNG;
-import static com.tajicabs.configuration.TajiCabs.DEST_NAME;
-import static com.tajicabs.configuration.TajiCabs.DISTANCE;
-import static com.tajicabs.configuration.TajiCabs.NAMES;
-import static com.tajicabs.configuration.TajiCabs.ORIG_LTNG;
-import static com.tajicabs.configuration.TajiCabs.ORIG_NAME;
-import static com.tajicabs.configuration.TajiCabs.PHONE;
+import static com.tajicabs.global.Variables.ACCOUNT_NAME;
+import static com.tajicabs.global.Variables.ACCOUNT_PHONE;
+import static com.tajicabs.global.Variables.COST;
+import static com.tajicabs.global.Variables.DEST_LTNG;
+import static com.tajicabs.global.Variables.DISTANCE;
+import static com.tajicabs.global.Variables.ORIG_LTNG;
+import static com.tajicabs.global.Variables.ORIG_NAME;
 
 public class RequestServices {
     private static final String TAG = RequestServices.class.getName();
@@ -39,7 +39,6 @@ public class RequestServices {
     public void requestRide(final String email) {
         RequestQueue queue = Volley.newRequestQueue(context);
         String tajiUrl = "https://taji.kennedykitho.me/taji/firebase/passenger/request-ride";
-
         final String rType = "702";
 
         // Request a string response from the provided URL.
@@ -47,54 +46,44 @@ public class RequestServices {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "===================================== COMPLETE");
+                        Log.d(TAG, "STRING REQUEST COMPLETE");
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "===================================== ERROR " + error.getMessage());
+                Log.e(TAG, "ERROR IN STRING REQUEST " + error.getMessage());
             }
         }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("email", email);
-                params.put("phone", PHONE);
-                params.put("name", NAMES);
+                params.put("passengerPhone", Variables.ACCOUNT_PHONE);
+                params.put("passengerName", Variables.ACCOUNT_NAME);
+                params.put("tripCost", Variables.COST);
+                params.put("tripDistance", Variables.DISTANCE);
+
                 params.put("request_type", rType);
-                params.put("cost", COST);
+                params.put("originLat", String.valueOf(ORIG_LTNG.latitude));
+                params.put("originLng", String.valueOf(ORIG_LTNG.longitude));
+                params.put("originName", ORIG_NAME);
 
-                double orgLat = ORIG_LTNG.latitude;
-                double orgLng = ORIG_LTNG.longitude;
+                params.put("destinationLat", String.valueOf(DEST_LTNG.latitude));
+                params.put("destinationLng", String.valueOf(DEST_LTNG.longitude));
+                params.put("destinationName", Variables.DEST_NAME);
 
-                double desLat = DEST_LTNG.latitude;
-                double desLng = DEST_LTNG.longitude;
-
-                String strOrg = orgLat + "," + orgLng;
-                String strDes = desLat + "," + desLng;
-
-                String lat = String.valueOf(orgLat);
-                String lng = String.valueOf(orgLng);
-
-                String emptyString = "";
                 final String tripId = UUID.randomUUID().toString();
-
-                params.put("origin", strOrg);
-                params.put("destination", strDes);
-                params.put("lat", lat);
-                params.put("lng", lng);
-
-                params.put("distance", DISTANCE);
-                params.put("orig_name", ORIG_NAME);
-                params.put("dest_name", DEST_NAME);
                 params.put("tripId", tripId);
 
                 Log.d(TAG, "=====================================" + params);
+                String emptyString = " ";
 
                 // Create Trip Request
                 RWServices rwServices = new RWServices(appDatabase);
-                rwServices.createTripRequest(tripId, strOrg, strDes, DISTANCE, COST, emptyString,
-                        emptyString, emptyString, emptyString, emptyString);
+                rwServices.createTripRequest(tripId, ORIG_NAME, String.valueOf(ORIG_LTNG.latitude),
+                        String.valueOf(ORIG_LTNG.longitude), String.valueOf(DEST_LTNG.latitude),
+                        String.valueOf(DEST_LTNG.longitude), ACCOUNT_NAME, ACCOUNT_PHONE, DISTANCE,
+                        COST, emptyString, emptyString, emptyString, emptyString);
 
                 return params;
             }

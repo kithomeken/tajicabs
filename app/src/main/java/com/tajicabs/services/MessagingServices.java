@@ -18,6 +18,9 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.tajicabs.R;
 import com.tajicabs.configuration.TajiCabs;
+import com.tajicabs.database.AppDatabase;
+import com.tajicabs.global.Variables;
+import com.tajicabs.home.Home;
 import com.tajicabs.passengers.PassengerHome;
 
 import java.util.Map;
@@ -78,6 +81,16 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
         switch (requestType) {
             case "800":
                 acceptedRequest(remoteMessage.getData());
+            break;
+
+            case "802":
+                TajiCabs.END_TRIP = "1";
+                completedTrip(remoteMessage.getData());
+            break;
+
+            case "805":
+                // Taji Start Trip
+                startTrip();
             break;
 
             default:
@@ -153,7 +166,7 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
      * @param hashMap FCM message body received.
      */
     private void sendNotification(Map<String, String> hashMap) {
-        Intent intent = new Intent(this, PassengerHome.class);
+        Intent intent = new Intent(this, Home.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -191,17 +204,17 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
     }
 
     private void acceptedRequest(Map<String, String> hashMap) {
-        Intent intent = new Intent(this, PassengerHome.class);
+        Intent intent = new Intent(this, Home.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        TajiCabs.DR_NAME = hashMap.get("name");
-        TajiCabs.DR_PHONE = hashMap.get("phone_number");
-        TajiCabs.DR_REG = "Vehicle Reg: KCX 000X";
-        TajiCabs.DR_MAKE = "Vehicle Make: Toyota Passo";
-        TajiCabs.DR_TOKEN = hashMap.get("driver_token");
+        Variables.DR_NAME = hashMap.get("name");
+        Variables.DR_PHONE = hashMap.get("phone_number");
+        Variables.DR_REG = "KCX 000X";
+        Variables.DR_MAKE = "Toyota Passo";
+        Variables.DR_TOKEN = hashMap.get("driver_token");
 
         // Message Breakdown
         String title = hashMap.get("title");
@@ -213,7 +226,9 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.taji_icon)
                         .setContentTitle(title)
-                        .setContentText(content)
+                        .setContentText("Your Driver is On Route")
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(content))
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
@@ -231,5 +246,52 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
         }
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    private void completedTrip(Map<String, String> hashMap) {
+        Intent intent = new Intent(this, Home.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+
+        // Message Breakdown
+        String title = hashMap.get("title");
+        String content = hashMap.get("content");
+
+        Variables.COST = hashMap.get("cost");
+        Variables.END_TRIP = "Y";
+
+        String channelId = getString(R.string.default_notification_channel_id);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder =
+                new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.drawable.taji_icon)
+                        .setContentTitle(title)
+                        .setContentText("Your Trip Has Ended")
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(content))
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
+                        .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    private void startTrip() {
+        // Update Trip Details with Start Trip Flag
+
     }
 }

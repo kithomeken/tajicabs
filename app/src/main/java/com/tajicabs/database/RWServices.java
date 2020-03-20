@@ -7,12 +7,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.tajicabs.configuration.TajiCabs;
+import com.tajicabs.global.Variables;
 
 import java.util.UUID;
 
-import static com.tajicabs.constants.Constants.ACTIVE_TRIP_STATE;
+import javax.xml.validation.Validator;
 
-// Read Write Services for Application Database
 public class RWServices {
     private final String TAG = RWServices.class.getName();
 
@@ -36,8 +36,6 @@ public class RWServices {
                 last_name, phone_number, firebaseToken);
 
         new createUserAsyncTask(userDetailsDao).execute(userDetails);
-
-        getUserDetails();
     }
 
     public void getUserDetails() {
@@ -49,12 +47,23 @@ public class RWServices {
         String phoneNumber = (userDetails == null) ? "No Data Found" : userDetails.getPhoneNumber();
         String firebaseToken = (userDetails == null) ? "No Data Found" : userDetails.getFirebaseToken();
 
-        TajiCabs.NAMES = firstName + " " + lastName;
-        TajiCabs.EMAIL = emailAdd;
-        TajiCabs.PHONE = phoneNumber;
-        TajiCabs.FIREBASE_TOKEN = firebaseToken;
+        Variables.ACCOUNT_FNAME = firstName;
+        Variables.ACCOUNT_LNAME = lastName;
+        Variables.ACCOUNT_EMAIL = emailAdd;
+        Variables.ACCOUNT_PHONE = phoneNumber;
+        Variables.ACCOUNT_NAME = firstName + " " + lastName;
+        Variables.FIREBASE_TOKEN = firebaseToken;
 
         Log.e(TAG, "USER DETAILS: " + emailAdd + " ===== " + firebaseToken);
+    }
+
+    public void endTripUpdate() {
+        TripRequests tripRequests = tripRequestsDao.getActiveTripRequest();
+
+        if (tripRequests != null) {
+            tripRequests.trip_state = "E";
+            tripRequestsDao.updateTripDetails(tripRequests);
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -72,12 +81,15 @@ public class RWServices {
         }
     }
 
-    public void createTripRequest(@NonNull String tripId, @NonNull String origin, @NonNull String destination,
-        @NonNull String distance, @NonNull String cost, String driverToken, String driverName,
-        String driverPhone, String vehicleRegNo, String vehicleMake) {
+    public void createTripRequest(@NonNull String trip_id, @NonNull String origin_name, @NonNull String origin_lat,
+          @NonNull String origin_lng, @NonNull String destination_name, @NonNull String destination_lat,
+          @NonNull String destination_lng, @NonNull String passenger_name, @NonNull String passenger_phone,
+          @NonNull String trip_distance, @NonNull String trip_cost, @NonNull String final_destination,
+          @NonNull String trip_date, @NonNull String trip_state) {
 
-        TripRequests tripRequests = new TripRequests(tripId, origin, destination, distance, cost,
-                driverToken, driverName, driverPhone, vehicleRegNo, vehicleMake, ACTIVE_TRIP_STATE);
+        TripRequests tripRequests = new TripRequests(trip_id, origin_name, origin_lat, origin_lng, destination_name,
+                destination_lat, destination_lng, passenger_name, passenger_phone, trip_distance,
+                trip_cost, final_destination, trip_date, trip_state);
 
         new createTripRequestAsyncTask(tripRequestsDao).execute(tripRequests);
     }
@@ -85,14 +97,14 @@ public class RWServices {
     public void getActiveTripDetails() {
         TripRequests tripRequests = tripRequestsDao.getActiveTripRequest();
 
-        String tripId = (tripRequests == null) ? "No Data Found" : tripRequests.getTripId();
-        String tripState = (tripRequests == null) ? "No Data Found" : tripRequests.getRequestTripState();
+        String tripId = (tripRequests == null) ? "No Data Found" : tripRequests.getTrip_id();
+        String tripState = (tripRequests == null) ? "No Data Found" : tripRequests.getTripState();
     }
 
-    public String getAnyTripRequest(String tripId) {
+/*    public String getAnyTripRequest(String tripId) {
         TripRequests tripRequests = tripRequestsDao.getAnyTripRequest(tripId);
         return (tripRequests == null) ? "No Trip Found" : tripRequests.getRequestTripState();
-    }
+    }*/
 
     @SuppressLint("StaticFieldLeak")
     private class createTripRequestAsyncTask extends AsyncTask<TripRequests, Void, Void> {
@@ -106,6 +118,11 @@ public class RWServices {
         protected Void doInBackground(TripRequests... tripRequests) {
             tripRequestsDao.createTripRequest(tripRequests[0]);
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            getUserDetails();
         }
     }
 }

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:screenOrientation="portrait"
+    android:orientation="vertical"
+    tools:context=".app.Welcome">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/welcome_screen" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="2">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingStart="@dimen/dim_10"
+                android:paddingEnd="0dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textSize="45dp"
+                    android:layout_marginBottom="@dimen/dim_00"
+                    android:text="@string/hello"
+                    tools:ignore="SpUsage" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textColor="@android:color/white"
+                    android:layout_marginBottom="@dimen/dim_00"
+                    android:textSize="@dimen/dim_15"
+                    android:text="@string/welcome_taji"
+                    tools:ignore="SpUsage" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="4"
+            tools:ignore="UselessLeaf" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@android:color/white"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="3">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:weightSum="5">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:paddingStart="@dimen/dim_20"
+                    android:paddingEnd="@dimen/dim_20"
+                    android:layout_weight="1.5">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textColor="@android:color/black"
+                        android:layout_marginBottom="@dimen/dim_00"
+                        android:text="Sign up or Sign In using your Taji Cabs account"
+                        android:gravity="center"
+                        tools:ignore="SpUsage" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3.5">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:paddingStart="@dimen/dim_05"
+                            android:paddingEnd="@dimen/dim_05">
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/SignIn"
+                                android:layout_width="200dp"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity="center"
+                                android:background="@drawable/borderline"
+                                android:paddingStart="@dimen/dim_40"
+                                android:paddingEnd="@dimen/dim_40"
+                                android:text="@string/sign_in"
+                                android:textColor="@color/colorPrimaryDark" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@android:color/white"
+                            android:paddingStart="@dimen/dim_05"
+                            android:paddingEnd="@dimen/dim_05">
+
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/SignUp"
+                                android:layout_width="200dp"
+                                android:layout_height="wrap_content"
+                                android:visibility="visible"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity="center"
+                                android:background="@drawable/borderline"
+                                android:paddingStart="@dimen/dim_40"
+                                android:paddingEnd="@dimen/dim_40"
+                                android:text="Sign Up"
+                                android:textColor="@color/colorPrimaryDark" />
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>

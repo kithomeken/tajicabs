@@ -13,6 +13,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.HomeStyle">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
     <style name="AppTheme.TajiNoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

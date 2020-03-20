@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -61,6 +63,7 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import com.tajicabs.R;
+import com.tajicabs.configuration.TajiCabs;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.directions.TajiDirections;
 import com.tajicabs.geolocation.LocationPool;
@@ -84,9 +87,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static com.tajicabs.configuration.TajiCabs.ACTIVITY_STATE;
 import static com.tajicabs.configuration.TajiCabs.COST;
@@ -100,6 +106,7 @@ import static com.tajicabs.configuration.TajiCabs.DR_PHONE;
 import static com.tajicabs.configuration.TajiCabs.DR_REG;
 import static com.tajicabs.configuration.TajiCabs.DR_TOKEN;
 import static com.tajicabs.configuration.TajiCabs.GOOGLE_API;
+import static com.tajicabs.configuration.TajiCabs.NAMES;
 import static com.tajicabs.configuration.TajiCabs.ORIG_LTNG;
 import static com.tajicabs.configuration.TajiCabs.ORIG_NAME;
 import static com.tajicabs.configuration.TajiCabs.REQUEST_LOCATION;
@@ -142,7 +149,7 @@ public class PassengerHome extends AppCompatActivity implements
     private Button requestRide, cancelRide;
 
     private static String EDIT_TEXT_TYPE = "E";
-    private View requestRidePopUp;
+    private View requestRidePopUp, endTripPopUp;
     private TextView fromDisp, toDisp, distanceCovered, costDisp;
     private TextView driverName, vehicleMake, vehicleReg, drivePhone;
 
@@ -234,7 +241,7 @@ public class PassengerHome extends AppCompatActivity implements
         TextView accountEmail = (TextView) navHeaderView.findViewById(R.id.accountEmail);
 
         assert firebaseUser != null;
-        accountName.setText(firebaseUser.getDisplayName());
+        accountName.setText(NAMES);
         accountEmail.setText(firebaseUser.getEmail());
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -252,6 +259,11 @@ public class PassengerHome extends AppCompatActivity implements
         });
 
         requestRideAction();
+
+        if (TajiCabs.END_TRIP == "1") {
+            View view = new View(getApplicationContext());
+            showEndTripPopUp(view);
+        }
     }
 
     private void driverAcceptBlock() {
@@ -468,7 +480,7 @@ public class PassengerHome extends AppCompatActivity implements
         requestRide = findViewById(R.id.requestRide);
         requestRide.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 hideKeyboard(v);
                 showRequestPopUp(v);
             }
@@ -479,6 +491,57 @@ public class PassengerHome extends AppCompatActivity implements
         final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    private void showEndTripPopUp(View view){
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        endTripPopUp = layoutInflater.inflate(R.layout.modal_end_trip, null);
+
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(endTripPopUp, width, height, focusable);
+        popupWindow.setElevation(8);
+
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        endTripPopUp.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                popupWindow.dismiss();
+                return true;
+            }
+        });
+
+        TextView costText = endTripPopUp.findViewById(R.id.costDisp);
+        costText.setText(COST);
+
+        Button closePopUp = endTripPopUp.findViewById(R.id.closePopUp);
+        closePopUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+    }
+
+    private void hidePopUp(View view) {
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        requestRidePopUp = layoutInflater.inflate(R.layout.modal_request_ride, null);
+
+        boolean focusable = true;
+        final PopupWindow popupWindow = new PopupWindow(requestRidePopUp, width, height, focusable);
+        popupWindow.setElevation(8);
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        if (popupWindow.isShowing()) {
+            popupWindow.dismiss();
         }
     }
 
@@ -503,6 +566,28 @@ public class PassengerHome extends AppCompatActivity implements
                 return true;
             }
         });
+
+        // Dismiss Window After 1 Minute
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(60000);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "EXCEPTION: " + e.getMessage());
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do some stuff
+                        Toast.makeText(PassengerHome.this, "No Driver Found. Try again Laters", Toast.LENGTH_LONG).show();
+                        popupWindow.dismiss();
+                    }
+                });
+            }
+        };
+        thread.start();
 
         // Request Ride
         requestRideNotification();
@@ -549,9 +634,51 @@ public class PassengerHome extends AppCompatActivity implements
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        int itemId = menuItem.getItemId();
+        Intent intent;
+
+        if (itemId == R.id.profile) {
+            intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        } else if (itemId == R.id.sign_out) {
+            FirebaseAuth.getInstance().signOut();
+
+            intent = new Intent(this, SignInActivity.class);
+            startActivity(intent);
+            finish();
+        }
         return false;
     }
 
+
+    public void getAddress(double lat, double lng) {
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            Address obj = addresses.get(0);
+            String add = obj.getAddressLine(0);
+//            add = add + "\n" + obj.getCountryName();
+//            add = add + "\n" + obj.getCountryCode();
+//            add = add + "\n" + obj.getAdminArea();
+//            add = add + "\n" + obj.getPostalCode();
+//            add = add + "\n" + obj.getSubAdminArea();
+//            add = add + "\n" + obj.getLocality();
+//            add = add + "\n" + obj.getSubThoroughfare();
+
+            ORIG_NAME = add;
+
+            Log.v(TAG, "Address: " + add);
+            // Toast.makeText(this, "Address=>" + add,
+            // Toast.LENGTH_SHORT).show();
+
+            // TennisAppActivity.showDialog(add);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            Log.e(TAG, "Location Name Not Found: " + e.getMessage());
+//            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
     @Override
@@ -615,6 +742,10 @@ public class PassengerHome extends AppCompatActivity implements
                             final String longitude = "" + mLastKnownLocation.getLongitude();
 
                             ORIG_LTNG = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+
+                            double latDouble = mLastKnownLocation.getLatitude();
+                            double lngDouble = mLastKnownLocation.getLongitude();
+                            getAddress(latDouble, lngDouble);
 
                             final Handler ha = new Handler();
                             ha.postDelayed(new Runnable() {

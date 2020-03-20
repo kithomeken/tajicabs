@@ -1,5 +1,15 @@
 <resources>
     <string name="app_name">Taji Cabs</string>
+    <string name="forgotPassword">Forgot Password?</string>
+    <string name="fname_placeholder">First Name</string>
+    <string name="lname_placeholder">Last Name</string>
+    <string name="phone_number_placeholder">Phone Number</string>
+    <string name="confirm_password_placeholder">Confirm Password</string>
+    <string name="email_placeholder">E-mail</string>
+    <string name="email_hint">E-mail Address</string>
+    <string name="password_placeholder">Password</string>
+
+
     <string name="title_activity_home">HomeActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -16,7 +26,7 @@
     <string name="email">E-mail Address</string>
     <string name="password">Password</string>
     <string name="sign_in">Sign In</string>
-    <string name="accountSignUp">Don\'t have an account? <!--Sign Up now--></string>
+    <string name="accountSignUp">Don\'t have an account? Create One</string>
     <string name="about_taji">About Taji Cabs</string>
     <string name="auth_failed">Account Authentication Failed.</string>
 
@@ -27,7 +37,7 @@
     <string name="last_name">Last Name</string>
     <string name="accountSignIn">Back to Sign In</string>
     <string name="id_number">ID Number</string>
-    <string name="sign_up">Create Account</string>
+    <string name="sign_up">Register</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="reg_failed">Account created failed. Try again later</string>
     <string name="err_500">Something went wrong. Try again later</string>
@@ -58,6 +68,19 @@
     <string name="fcm_message">Firebase Cloud Message</string>
     <string name="cancel_request">Cancel Request</string>
     <string name="find_driver">Finding a driver new you</string>
+    <string name="create_account">Create Account</string>
 
-
+    <string name="password_hint">********</string>
+    <string name="vehicle_make_placeholder">Vehicle Make</string>
+    <string name="vehicle_reg_placeholder">Vehicle License</string>
+    <string name="terms_and_conditions">Accept the Terms and Conditions</string>
+    <string name="t_and_c"><![CDATA[Terms & Conditions]]></string>
+    <string name="forgot_password_text">Forgot Your email/password? Just input your email and you\'ll be one click away from resetting your password</string>
+    <string name="reset_account">RESET ACCOUNT</string>
+    <string name="recovery_success">Recovery Mail Successfully Sent</string>
+    <string name="where_would_you_like_to_go">Where would you like to go?</string>
+    <string name="your_driver_is_on_their_way">Your driver is on their way...</string>
+    <string name="end_trip_pop_up_text">Thank you for travelling with Taji Cabs. \n\nYour trip request has ended. Here\'s the total amount owed for the trip</string>
+    <string name="ksh">KSh</string>
+    <string name="_0000">0000</string>
 </resources>

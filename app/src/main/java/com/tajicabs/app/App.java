@@ -1,20 +1,23 @@
-package com.tajicabs.configuration;
+package com.tajicabs.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import com.tajicabs.app.Welcome;
+import com.tajicabs.auth.SignIn;
+import com.tajicabs.configuration.StartApp;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.database.RWServices;
-import com.tajicabs.passengers.PassengerHome;
+import com.tajicabs.home.Home;
 
-public class StartApp extends AppCompatActivity {
+public class App extends AppCompatActivity {
+    private String TAG = StartApp.class.getSimpleName();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,18 +25,20 @@ public class StartApp extends AppCompatActivity {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
         if (firebaseUser != null) {
-            // Initialize Read Write Application Database Services
+            // Get User Details From Application Database
             AppDatabase appDatabase = AppDatabase.getDatabase(this);
             RWServices rwServices = new RWServices(appDatabase);
             rwServices.getUserDetails();
 
-            // Go To Home
-            Intent intent = new Intent(StartApp.this, PassengerHome.class);
+            Log.i(TAG, "Signing In User");
+
+            // Go To Home Screen
+            Intent intent = new Intent(App.this, Home.class);
             startActivity(intent);
             finish();
         } else{
             // Go To Sign In
-            Intent intent = new Intent(StartApp.this, Welcome.class);
+            Intent intent = new Intent(App.this, Welcome.class);
             startActivity(intent);
             finish();
         }

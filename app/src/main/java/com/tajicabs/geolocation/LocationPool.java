@@ -16,7 +16,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.tajicabs.R;
-import com.tajicabs.constants.Constants;
+import com.tajicabs.global.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,8 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.tajicabs.configuration.TajiCabs.DR_TOKEN;
-import static com.tajicabs.constants.Constants.SNIPPET_KEY;
+import static com.tajicabs.global.Constants.SNIPPET_KEY;
 
 public class LocationPool {
     private static final String TAG = LocationPool.class.getName();
