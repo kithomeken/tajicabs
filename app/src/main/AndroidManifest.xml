@@ -22,12 +22,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".passengers.BasicActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-        <activity
-            android:name=".configuration.StartApp"
+            android:name=".app.App"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,6 +30,36 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".app.Welcome"
+            android:theme="@style/AppTheme.TajiNoActionBar" />
+        <activity
+            android:name=".auth.SignUp"
+            android:parentActivityName=".app.Welcome"
+            android:theme="@style/AppTheme.TajiNoActionBar" />
+        <activity
+            android:name=".auth.ForgotPassword"
+            android:parentActivityName=".auth.SignIn"
+            android:theme="@style/AppTheme.TajiNoActionBar" />
+        <activity
+            android:name=".auth.SignIn"
+            android:theme="@style/AppTheme.TajiNoActionBar" />
+        <activity android:name=".home.Home"
+            android:theme="@style/AppTheme.HomeStyle"/>
+
+
+
+
+
+        <activity
+            android:name=".passengers.ProfileActivity"
+            android:theme="@style/AppTheme.TajiNoActionBar" />
+        <activity
+            android:name=".passengers.BasicActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".configuration.StartApp"
+            android:theme="@style/SplashTheme"/>
         <activity
             android:name=".passengers.PassengerHome"
             android:theme="@style/AppTheme.TajiNoActionBar" />
@@ -63,16 +88,16 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <!--<service
+        <!--
+<service
             android:name=".service.TajiInstanceService"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
-        </service>-->
-
+        </service>
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/taji_cabs_foreground" />

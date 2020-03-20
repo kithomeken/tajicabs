@@ -29,8 +29,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.concurrent.Executor;
 
@@ -56,6 +58,7 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
     private EditText emailText;
     private EditText passwordText;
     private EditText confirmText;
+    private CheckBox termsAndConditions;
 
     @Override
     public void onStart() {
@@ -78,6 +81,7 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
 
         mAuth = FirebaseAuth.getInstance();
         regFailed = findViewById(R.id.regFailed);
+        termsAndConditions = findViewById(R.id.termsAndCondition);
 
         firstText = findViewById(R.id.first_name);
         lastText = findViewById(R.id.last_name);
@@ -187,6 +191,11 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
            valid = false;
        } else {
            passwordText.setError(null);
+       }
+
+       if (!termsAndConditions.isChecked()) {
+           valid = false;
+           Toast.makeText(this, "Kindly accept the terms and conditions to continue", Toast.LENGTH_LONG).show();
        }
 
         return valid;
@@ -299,6 +308,10 @@ public class SignUpActivity extends Firebase implements View.OnClickListener {
                     String firstName = firstName();
                     String lastName = lastName();
                     String phoneNumber = phoneNumber();
+
+                    NAMES = firstName + " " + lastName;
+                    EMAIL = email;
+                    PHONE = phoneNumber;
 
                     // Initialize Read Write Application Database Services
                     RWServices rwServices = new RWServices(appDatabase);

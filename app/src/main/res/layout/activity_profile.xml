@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".passengers.ProfileActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true"
+        android:layout_alignParentBottom="true">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dim_00"
+            android:padding="@dimen/dim_00"
+            app:titleTextColor="@android:color/white"
+            app:title="Profile Settings"
+            android:elevation="0dp"
+            android:background="@color/colorPrimary"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:fitsSystemWindows="true"
+            android:padding="@dimen/dim_20"
+            android:layout_alignParentBottom="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim_20"
+                android:paddingStart="@dimen/dim_20"
+                android:paddingEnd="@dimen/dim_20">
+
+                <EditText
+                    android:id="@+id/accountFName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="@dimen/dim_10"
+                    android:hint="@string/first_name"
+                    android:textSize="@dimen/dim_15"
+                    android:inputType="textCapWords"
+                    android:background="@drawable/grey_borderline"
+                    tools:ignore="SpUsage" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dim_15"
+                    android:layout_marginEnd="@dimen/dim_10"
+                    android:layout_marginTop="3dp"
+                    android:paddingEnd="@dimen/dim_05"
+                    android:paddingStart="@dimen/dim_05"
+                    android:background="#ffffff"
+                    android:text="@string/first_name" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim_20"
+                android:paddingStart="@dimen/dim_20"
+                android:paddingEnd="@dimen/dim_20">
+
+                <EditText
+                    android:id="@+id/accountLName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="@dimen/dim_10"
+                    android:hint="@string/last_name"
+                    android:textSize="@dimen/dim_15"
+                    android:inputType="textCapWords"
+                    android:background="@drawable/grey_borderline"
+                    tools:ignore="SpUsage" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dim_15"
+                    android:layout_marginEnd="@dimen/dim_10"
+                    android:layout_marginTop="3dp"
+                    android:paddingEnd="@dimen/dim_05"
+                    android:paddingStart="@dimen/dim_05"
+                    android:background="#ffffff"
+                    android:text="@string/last_name" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim_20"
+                android:paddingStart="@dimen/dim_20"
+                android:paddingEnd="@dimen/dim_20">
+
+                <EditText
+                    android:id="@+id/accountPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="@dimen/dim_10"
+                    android:hint="@string/phone_number"
+                    android:textSize="@dimen/dim_15"
+                    android:inputType="textCapWords"
+                    android:background="@drawable/grey_borderline"
+                    tools:ignore="SpUsage" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dim_15"
+                    android:layout_marginEnd="@dimen/dim_10"
+                    android:layout_marginTop="3dp"
+                    android:paddingEnd="@dimen/dim_05"
+                    android:paddingStart="@dimen/dim_05"
+                    android:background="#ffffff"
+                    android:text="@string/phone_number" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dim_20"
+                android:paddingStart="@dimen/dim_20"
+                android:paddingEnd="@dimen/dim_20">
+
+                <EditText
+                    android:id="@+id/accountEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="@dimen/dim_10"
+                    android:hint="@string/email"
+                    android:textSize="@dimen/dim_15"
+                    android:inputType="textEmailAddress"
+                    android:background="@drawable/grey_borderline"
+                    tools:ignore="SpUsage" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dim_15"
+                    android:layout_marginEnd="@dimen/dim_10"
+                    android:layout_marginTop="3dp"
+                    android:paddingEnd="@dimen/dim_05"
+                    android:paddingStart="@dimen/dim_05"
+                    android:background="#ffffff"
+                    android:text="@string/email" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dim_20"
+                android:paddingStart="@dimen/dim_05"
+                android:paddingEnd="@dimen/dim_05">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/saveChanges"
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:background="@drawable/round_button"
+                    android:paddingStart="@dimen/dim_40"
+                    android:paddingEnd="@dimen/dim_40"
+                    android:text="Save Changes"
+                    android:textColor="@android:color/white" />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

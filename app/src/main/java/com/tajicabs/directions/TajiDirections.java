@@ -15,7 +15,7 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.TravelMode;
-import com.tajicabs.passengers.PassengerHome;
+import com.tajicabs.global.Variables;
 
 import org.joda.time.DateTime;
 
@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import static com.tajicabs.configuration.TajiCabs.DEFAULT_ZOOM;
 import static com.tajicabs.configuration.TajiCabs.DEST_LTNG;
 import static com.tajicabs.configuration.TajiCabs.DEST_NAME;
-import static com.tajicabs.configuration.TajiCabs.DISTANCE;
 import static com.tajicabs.configuration.TajiCabs.GOOGLE_API;
 import static com.tajicabs.configuration.TajiCabs.ORIG_LTNG;
 import static com.tajicabs.configuration.TajiCabs.ORIG_NAME;
@@ -116,6 +115,7 @@ public class TajiDirections {
         distance = Math.round(distance * 100.0) / 100.0;
         distanceStr = "" + distance;
 
+        // Distance is in KM
         return distanceStr;
     }
 
@@ -138,7 +138,10 @@ public class TajiDirections {
         }
 
         cost = Math.round(cost);
+        cost = Math.round(cost/50.0) * 50;
         NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
+
+        Variables.COST = String.valueOf(cost);
         return numberFormat.format(cost);
     }
 

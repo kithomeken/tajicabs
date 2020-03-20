@@ -4,113 +4,154 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-@Entity(tableName = "tripRequests")
+@Entity(tableName = "tripDetails")
 public class TripRequests {
-    public TripRequests(@NonNull String tripId, @NonNull String origin, @NonNull String destination,
-        @NonNull String distance, @NonNull String cost, String driverToken, String driverName,
-        String driverPhone, String vehicleRegNo, String vehicleMake, @NonNull String requestTripState) {
+    public TripRequests(@NonNull String trip_id, @NonNull String origin_name, @NonNull String origin_lat,
+                       @NonNull String origin_lng, @NonNull String destination_name, @NonNull String destination_lat,
+                       @NonNull String destination_lng, @NonNull String passenger_name, @NonNull String passenger_phone,
+                       @NonNull String trip_distance, @NonNull String trip_cost, @NonNull String final_destination,
+                       @NonNull String trip_date, @NonNull String trip_state) {
 
-        this.tripId = tripId;
-        this.origin = origin;
-        this.destination = destination;
-        this.distance = distance;
-        this.cost = cost;
-        this.driverToken = driverToken;
-        this.driverName = driverName;
-        this.driverPhone = driverPhone;
-        this.vehicleRegNo = vehicleRegNo;
-        this.vehicleMake = vehicleMake;
-        this.requestTripState = requestTripState;
+        this.trip_id = trip_id;
+        this.origin_name = origin_name;
+        this.origin_lat = origin_lat;
+        this.origin_lng = origin_lng;
+        this.destination_name = destination_name;
+        this.destination_lat = destination_lat;
+        this.destination_lng = destination_lng;
+        this.passenger_name = passenger_name;
+        this.passenger_phone = passenger_phone;
+        this.trip_distance = trip_distance;
+        this.trip_cost = trip_cost;
+        this.final_destination = final_destination;
+        this.trip_date = trip_date;
+        this.trip_state = trip_state;
     }
 
     @PrimaryKey/*(autoGenerate = true)*/
     @NonNull
     @ColumnInfo(name = "trip_id")
-    public String tripId;
+    public String trip_id;
 
-    @ColumnInfo(name = "origin")
+    @ColumnInfo(name = "origin_name")
     @NonNull
-    public String origin;
+    public String origin_name;
 
-    @ColumnInfo(name = "destination")
+    @ColumnInfo(name = "origin_lat")
     @NonNull
-    public String destination;
+    public String origin_lat;
 
-    @ColumnInfo(name = "distance")
+    @ColumnInfo(name = "origin_lng")
     @NonNull
-    public String distance;
+    public String origin_lng;
 
-    @ColumnInfo(name = "cost")
+    @ColumnInfo(name = "destination_name")
     @NonNull
-    public String cost;
+    public String destination_name;
 
-    @ColumnInfo(name = "driver_token")
-    public String driverToken;
+    @ColumnInfo(name = "destination_lat")
+    @NonNull
+    public String destination_lat;
 
-    @ColumnInfo(name = "driver_name")
-    public String driverName;
+    @ColumnInfo(name = "destination_lng")
+    @NonNull
+    public String destination_lng;
 
-    @ColumnInfo(name = "driver_phone")
-    public String driverPhone;
+    @ColumnInfo(name = "passenger_name")
+    @NonNull
+    public String passenger_name;
 
-    @ColumnInfo(name = "reg_no")
-    public String vehicleRegNo;
+    @ColumnInfo(name = "passenger_phone")
+    @NonNull
+    public String passenger_phone;
 
-    @ColumnInfo(name = "vehicle_make")
-    public String vehicleMake;
+    @ColumnInfo(name = "trip_distance")
+    @NonNull
+    public String trip_distance;
+
+    @ColumnInfo(name = "trip_cost")
+    @NonNull
+    public String trip_cost;
+
+    @ColumnInfo(name = "final_destination")
+    @NonNull
+    public String final_destination;
+
+    @ColumnInfo(name = "trip_date")
+    @NonNull
+    public String trip_date;
 
     @ColumnInfo(name = "trip_state")
     @NonNull
-    public String requestTripState;
+    public String trip_state;
 
     @NonNull
-    public String getTripId() {
-        return tripId;
-    }
-
-    @NonNull
-    public String getOrigin() {
-        return origin;
+    public String getTrip_id() {
+        return trip_id;
     }
 
     @NonNull
-    public String getDestination() {
-        return destination;
+    public String getOrigin_name() {
+        return origin_name;
     }
 
     @NonNull
-    public String getDistance() {
-        return distance;
+    public String getOrigin_lat() {
+        return origin_lat;
     }
 
     @NonNull
-    public String getCost() {
-        return cost;
-    }
-
-    public String getDriverToken() {
-        return driverToken;
-    }
-
-    public String getDriverName() {
-        return driverName;
-    }
-
-    public String getDriverPhone() {
-        return driverPhone;
-    }
-
-    public String getVehicleRegNo() {
-        return vehicleRegNo;
-    }
-
-    public String getVehicleMake() {
-        return vehicleMake;
+    public String getOrigin_lng() {
+        return origin_lng;
     }
 
     @NonNull
-    public String getRequestTripState() {
-        return requestTripState;
+    public String getDestination_name() {
+        return destination_name;
+    }
+
+    @NonNull
+    public String getDestination_lat() {
+        return destination_lat;
+    }
+
+    @NonNull
+    public String getDestination_lng() {
+        return destination_lng;
+    }
+
+    @NonNull
+    public String getPassenger_name() {
+        return passenger_name;
+    }
+
+    @NonNull
+    public String getPassenger_phone() {
+        return passenger_phone;
+    }
+
+    @NonNull
+    public String getTrip_distance() {
+        return trip_distance;
+    }
+
+    @NonNull
+    public String getTrip_cost() {
+        return trip_cost;
+    }
+
+    @NonNull
+    public String getFinal_destination() {
+        return final_destination;
+    }
+
+    @NonNull
+    public String getTrip_date() {
+        return trip_date;
+    }
+
+    @NonNull
+    public String getTripState() {
+        return trip_state;
     }
 }

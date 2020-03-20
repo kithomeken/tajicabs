@@ -5,13 +5,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/black_backdrop"
     android:orientation="vertical"
-    android:weightSum="5"
+    android:weightSum="10"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2" />
+        android:layout_weight="7" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,22 +24,20 @@
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
             android:backgroundTint="@android:color/white"
-            app:cardElevation="3dp"
-            app:cardCornerRadius="10dp" >
+            app:cardElevation="3dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:weightSum="7"
+                android:weightSum="3"
                 android:orientation="vertical">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="0.75"
                     android:paddingStart="@dimen/dim_10"
                     android:paddingEnd="@dimen/dim_10"
-                    android:layout_marginTop="@dimen/dim_10"
                     tools:ignore="MissingConstraints">
 
                     <TextView
@@ -48,10 +46,10 @@
                         android:layout_marginTop="3dp"
                         android:paddingEnd="@dimen/dim_05"
                         android:paddingStart="@dimen/dim_05"
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="@color/dark_grey"
                         android:textStyle="bold"
                         android:layout_centerInParent="true"
-                        android:textSize="@dimen/dim_20"
+                        android:textSize="17dp"
                         android:gravity="center"
                         android:text="@string/find_driver" />
 
@@ -60,13 +58,13 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="1.5"
                     android:paddingStart="@dimen/dim_10"
                     android:paddingEnd="@dimen/dim_10"
-                    android:layout_marginTop="@dimen/dim_10"
                     tools:ignore="MissingConstraints">
 
                     <pl.droidsonroids.gif.GifImageView
+                        android:padding="@dimen/dim_20"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:src="@drawable/loading_bar"
@@ -78,7 +76,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="0.75"
                     tools:ignore="MissingConstraints">
 
                     <androidx.appcompat.widget.AppCompatButton

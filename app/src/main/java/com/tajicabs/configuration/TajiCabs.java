@@ -20,6 +20,9 @@ public class TajiCabs {
     public static CookieStore APP_CLIENT_COOKIE = new BasicCookieStore();
     public static HttpClient APP_HTTP_CLIENT = new DefaultHttpClient();
 
+    public static String FNAME;
+    public static String LNAME;
+
     public static String EMAIL;
     public static String NAMES;
     public static String IDNUM;
@@ -46,4 +49,6 @@ public class TajiCabs {
     public static String DR_MAKE = null;
 
     public static String DR_TOKEN = null;
+
+    public static String END_TRIP = "0";
 }

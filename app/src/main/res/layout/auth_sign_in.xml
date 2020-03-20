@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:screenOrientation="portrait"
+    android:orientation="vertical"
+    tools:context=".auth.SignIn">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background_1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="2">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:paddingStart="@dimen/dim_10"
+                android:paddingEnd="0dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/dim_30"
+                    android:layout_marginBottom="@dimen/dim_00"
+                    android:text="Welcome back"
+                    tools:ignore="SpUsage" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="@dimen/dim_00"
+                    android:textSize="17dp"
+                    android:text="to Taji Cabs"
+                    tools:ignore="SpUsage" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="@dimen/dim_00"
+                android:text="@string/sign_in_text"
+                android:gravity="center"
+                tools:ignore="SpUsage" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_centerInParent="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="@dimen/dim_20"
+                android:paddingEnd="@dimen/dim_20">
+
+                <EditText
+                    android:id="@+id/accountEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:padding="@dimen/dim_10"
+                    android:hint="@string/email_hint"
+                    android:textSize="@dimen/dim_15"
+                    android:inputType="textEmailAddress"
+                    android:background="@drawable/grey_borderline"
+                    tools:ignore="SpUsage" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dim_15"
+                    android:layout_marginEnd="@dimen/dim_10"
+                    android:layout_marginTop="3dp"
+                    android:paddingEnd="@dimen/dim_05"
+                    android:paddingStart="@dimen/dim_05"
+                    android:background="#ffffff"
+                    android:text="@string/email_placeholder" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:paddingStart="@dimen/dim_20"
+                android:paddingEnd="@dimen/dim_20">
+
+                <EditText
+                    android:id="@+id/accountPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/grey_borderline"
+                    android:hint="@string/password_placeholder"
+                    android:inputType="textPassword"
+                    android:padding="@dimen/dim_10"
+                    android:textSize="@dimen/dim_15"
+                    tools:ignore="SpUsage" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dim_15"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="@dimen/dim_10"
+                    android:background="#ffffff"
+                    android:paddingStart="@dimen/dim_05"
+                    android:paddingEnd="@dimen/dim_05"
+                    android:text="@string/password_placeholder" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="0.5">
+
+            <LinearLayout
+                android:layout_centerInParent="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingEnd="@dimen/dim_20"
+                android:paddingStart="@dimen/dim_20"
+                android:weightSum="5">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_gravity="end"
+                    android:layout_weight="2"
+                    android:gravity="end"
+                    android:layout_height="match_parent"
+                    tools:ignore="UselessLeaf" />
+
+                <RelativeLayout
+                    android:id="@+id/forgotPasswordLink"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:layout_gravity="end"
+                    android:gravity="end">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/dark_grey"
+                        android:textStyle="bold"
+                        android:text="@string/forgotPassword"
+                        android:layout_centerInParent="true"
+                        android:textAllCaps="false"
+                        android:paddingEnd="@dimen/dim_10"
+                        android:paddingStart="0dp"
+                        android:textAlignment="textEnd"
+                        android:layout_gravity="end"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/authFailed"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="0.5">
+
+            <RelativeLayout
+                android:layout_centerInParent="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/dim_05"
+                android:paddingEnd="@dimen/dim_05">
+
+                <TextView
+                    android:id="@+id/accountError"
+                    android:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textColor="@color/error"
+                    android:gravity="center"
+                    android:layout_marginBottom="@dimen/dim_00"
+                    android:text="@string/sign_in_text"
+                    tools:ignore="SpUsage" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="1">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="@dimen/dim_05"
+                android:paddingEnd="@dimen/dim_05">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/accountSignIn"
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="end"
+                    android:background="@drawable/borderline"
+                    android:paddingStart="@dimen/dim_40"
+                    android:paddingEnd="@dimen/dim_40"
+                    android:text="@string/sign_in"
+                    android:textColor="@color/colorPrimaryDark" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_centerInParent="true"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/accountSignIn"
+                    android:layout_centerHorizontal="true"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/signUpLink"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/dim_20"
+            android:paddingEnd="@dimen/dim_20"
+            android:layout_weight="0.75">
+
+            <LinearLayout
+                android:layout_centerInParent="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:layout_gravity="end"
+                    android:gravity="end">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/accountSignUp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/dark_grey"
+                        android:textStyle="bold"
+                        android:text="@string/accountSignUp"
+                        android:layout_centerInParent="true"
+                        android:textAllCaps="false"
+                        android:textAlignment="center"
+                        android:layout_gravity="end"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
