@@ -600,7 +600,11 @@ public class Home extends AppCompatActivity implements
                 startActivity(intent);
                 finish();
             }
+        } else if (itemId == R.id.nav_contacts) {
+
         }
+
+
         return false;
     }
 

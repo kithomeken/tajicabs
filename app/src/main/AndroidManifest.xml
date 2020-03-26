@@ -21,10 +21,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".settings.ContactUs"></activity>
-        <activity android:name=".settings.UserProfile" />
-        <activity android:name=".settings.PrivacyPolicy" />
-        <activity android:name=".settings.Settings" />
         <activity
             android:name=".app.App"
             android:theme="@style/SplashTheme">
@@ -54,6 +50,19 @@
         <activity
             android:name=".app.OnBoardingUI"
             android:theme="@style/AppTheme.TajiNoActionBar" />
+
+        <activity android:name=".settings.ContactUs"
+            android:parentActivityName=".home.Home"
+            android:theme="@style/AppTheme.GreenTop"/>
+        <activity android:name=".settings.UserProfile"
+            android:parentActivityName=".settings.Settings"
+            android:theme="@style/AppTheme.GreenTop"/>
+        <activity android:name=".settings.PrivacyPolicy"
+            android:parentActivityName=".settings.Settings"
+            android:theme="@style/AppTheme.GreenTop"/>
+        <activity android:name=".settings.Settings"
+            android:parentActivityName=".home.Home"
+            android:theme="@style/AppTheme.GreenTop"/>
         <activity
             android:name=".passengers.ProfileActivity"
             android:theme="@style/AppTheme.TajiNoActionBar" />
