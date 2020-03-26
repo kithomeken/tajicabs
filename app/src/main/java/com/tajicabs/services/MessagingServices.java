@@ -17,8 +17,10 @@ import androidx.work.WorkManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.tajicabs.R;
+import com.tajicabs.app.App;
 import com.tajicabs.configuration.TajiCabs;
 import com.tajicabs.database.AppDatabase;
+import com.tajicabs.database.RWServices;
 import com.tajicabs.global.Variables;
 import com.tajicabs.home.Home;
 import com.tajicabs.passengers.PassengerHome;
@@ -212,8 +214,8 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
 
         Variables.DR_NAME = hashMap.get("name");
         Variables.DR_PHONE = hashMap.get("phone_number");
-        Variables.DR_REG = "KCX 000X";
-        Variables.DR_MAKE = "Toyota Passo";
+        Variables.DR_REG = hashMap.get("reg_no");
+        Variables.DR_MAKE = hashMap.get("vehicle_make");
         Variables.DR_TOKEN = hashMap.get("driver_token");
 
         // Message Breakdown
@@ -261,6 +263,10 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
 
         Variables.COST = hashMap.get("cost");
         Variables.END_TRIP = "Y";
+
+        AppDatabase appDatabase = AppDatabase.getDatabase(getApplicationContext());
+        RWServices rwServices = new RWServices(appDatabase);
+        rwServices.endTripUpdate();
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

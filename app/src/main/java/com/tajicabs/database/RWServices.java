@@ -66,6 +66,26 @@ public class RWServices {
         }
     }
 
+    public String getEmailAdd() {
+        UserDetails userDetails = userDetailsDao.getUserDetails();
+        return (userDetails == null) ? "No Data Found" : userDetails.getEmail();
+    }
+
+    public String getFirstName() {
+        UserDetails userDetails = userDetailsDao.getUserDetails();
+        return (userDetails == null) ? "No Data Found" : userDetails.getFirstName();
+    }
+
+    public String getLastName() {
+        UserDetails userDetails = userDetailsDao.getUserDetails();
+        return (userDetails == null) ? "No Data Found" : userDetails.getLastName();
+    }
+
+    public String getPhoneNumber() {
+        UserDetails userDetails = userDetailsDao.getUserDetails();
+        return (userDetails == null) ? "No Data Found" : userDetails.getPhoneNumber();
+    }
+
     @SuppressLint("StaticFieldLeak")
     private class createUserAsyncTask extends AsyncTask<UserDetails, Void, Void> {
         UserDetailsDao userDetailsDao;
@@ -94,11 +114,9 @@ public class RWServices {
         new createTripRequestAsyncTask(tripRequestsDao).execute(tripRequests);
     }
 
-    public void getActiveTripDetails() {
+    public String getActiveTripDetails() {
         TripRequests tripRequests = tripRequestsDao.getActiveTripRequest();
-
-        String tripId = (tripRequests == null) ? "No Data Found" : tripRequests.getTrip_id();
-        String tripState = (tripRequests == null) ? "No Data Found" : tripRequests.getTripState();
+        return (tripRequests == null) ? "No Data Found" : tripRequests.getTrip_id();
     }
 
 /*    public String getAnyTripRequest(String tripId) {

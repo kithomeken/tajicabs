@@ -103,7 +103,7 @@ public class LocationPool {
             .snippet(SNIPPET_KEY)
         );
 
-        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.icon_driver));
+        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.taxi_icon));
         markerArrayList.add(marker);
     }
 

@@ -44,13 +44,25 @@
         <activity
             android:name=".auth.SignIn"
             android:theme="@style/AppTheme.TajiNoActionBar" />
-        <activity android:name=".home.Home"
-            android:theme="@style/AppTheme.HomeStyle"/>
+        <activity
+            android:name=".home.Home"
+            android:theme="@style/AppTheme.HomeStyle" />
+        <activity
+            android:name=".app.OnBoardingUI"
+            android:theme="@style/AppTheme.TajiNoActionBar" />
 
-
-
-
-
+        <activity android:name=".settings.ContactUs"
+            android:parentActivityName=".home.Home"
+            android:theme="@style/AppTheme.GreenTop"/>
+        <activity android:name=".settings.UserProfile"
+            android:parentActivityName=".settings.Settings"
+            android:theme="@style/AppTheme.GreenTop"/>
+        <activity android:name=".settings.PrivacyPolicy"
+            android:parentActivityName=".settings.Settings"
+            android:theme="@style/AppTheme.GreenTop"/>
+        <activity android:name=".settings.Settings"
+            android:parentActivityName=".home.Home"
+            android:theme="@style/AppTheme.GreenTop"/>
         <activity
             android:name=".passengers.ProfileActivity"
             android:theme="@style/AppTheme.TajiNoActionBar" />
@@ -59,7 +71,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".configuration.StartApp"
-            android:theme="@style/SplashTheme"/>
+            android:theme="@style/SplashTheme" />
         <activity
             android:name=".passengers.PassengerHome"
             android:theme="@style/AppTheme.TajiNoActionBar" />

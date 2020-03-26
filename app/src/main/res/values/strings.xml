@@ -83,4 +83,14 @@
     <string name="end_trip_pop_up_text">Thank you for travelling with Taji Cabs. \n\nYour trip request has ended. Here\'s the total amount owed for the trip</string>
     <string name="ksh">KSh</string>
     <string name="_0000">0000</string>
+    <string name="hello_first_name">Hello, First Name</string>
+    <string name="welcome_long_text">Your Taji account set up was successful. \n\nLet\'s ride Taji Cabs. We\'ll take you anywhere.</string>
+    <string name="finish_setup">Finish Setup</string>
+    <string name="settings">Settings</string>
+    <string name="terms_privacy_policy">Privacy Policy</string>
+    <string name="my_profile">My Profile</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="my_trips">My Trips</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="sign_out">Sign Out</string>
 </resources>
