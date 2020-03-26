@@ -5,41 +5,24 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/profile"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="My Profile" />
+            android:id="@+id/nav_trips"
+            android:icon="@drawable/icon_cab"
+            android:title="@string/my_trips" />
+
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="My Trips" />
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/icon_settings"
+            android:title="@string/settings" />
+
         <item
-            android:id="@+id/nav_slideshow"
-            android:visible="false"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+            android:id="@+id/nav_contacts"
+            android:icon="@drawable/icon_phone_call"
+            android:title="@string/contact_us" />
+
         <item
-            android:id="@+id/nav_tools"
-            android:visible="false"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_tools" />
+            android:id="@+id/sign_out"
+            android:icon="@drawable/icon_logout"
+            android:title="@string/sign_out" />
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Settings" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Contact Us" />
-
-            <item
-                android:id="@+id/sign_out"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Sign Out" />
-        </menu>
-    </item>
 
 </menu>

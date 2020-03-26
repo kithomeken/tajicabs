@@ -32,6 +32,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
 import com.tajicabs.R;
+import com.tajicabs.app.OnBoardingUI;
 import com.tajicabs.database.RWServices;
 import com.tajicabs.database.UserDetails;
 import com.tajicabs.global.Constants;
@@ -326,7 +327,7 @@ public class SignUp extends AppCompatActivity {
                         Variables.ACTIVITY_STATE = 0;
                         authThread.hideProgressDialog();
 
-                        Intent intent = new Intent(SignUp.this, Home.class);
+                        Intent intent = new Intent(SignUp.this, OnBoardingUI.class);
                         startActivity(intent);
                         finish();
                     }
@@ -334,6 +335,15 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "ON FAILURE " + error.getMessage());
+                FirebaseAuth.getInstance().signOut();
+
+                authFailed.setVisibility(View.VISIBLE);
+                String failedSignUp = "Error creating Taji Cabs account. Kindly check your internet connectivity";
+                accountError.setText(failedSignUp);
+
+                Variables.ACTIVITY_STATE = 0;
+                // End Main Thread
+                authThread.hideProgressDialog();
             }
         }) {
             @Override

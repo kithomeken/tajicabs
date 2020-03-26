@@ -21,6 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".settings.ContactUs"></activity>
+        <activity android:name=".settings.UserProfile" />
+        <activity android:name=".settings.PrivacyPolicy" />
+        <activity android:name=".settings.Settings" />
         <activity
             android:name=".app.App"
             android:theme="@style/SplashTheme">
@@ -44,13 +48,12 @@
         <activity
             android:name=".auth.SignIn"
             android:theme="@style/AppTheme.TajiNoActionBar" />
-        <activity android:name=".home.Home"
-            android:theme="@style/AppTheme.HomeStyle"/>
-
-
-
-
-
+        <activity
+            android:name=".home.Home"
+            android:theme="@style/AppTheme.HomeStyle" />
+        <activity
+            android:name=".app.OnBoardingUI"
+            android:theme="@style/AppTheme.TajiNoActionBar" />
         <activity
             android:name=".passengers.ProfileActivity"
             android:theme="@style/AppTheme.TajiNoActionBar" />
@@ -59,7 +62,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".configuration.StartApp"
-            android:theme="@style/SplashTheme"/>
+            android:theme="@style/SplashTheme" />
         <activity
             android:name=".passengers.PassengerHome"
             android:theme="@style/AppTheme.TajiNoActionBar" />

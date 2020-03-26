@@ -83,6 +83,7 @@ import com.tajicabs.geolocation.LocationPool;
 import com.tajicabs.global.Variables;
 import com.tajicabs.passengers.ProfileActivity;
 import com.tajicabs.services.RequestServices;
+import com.tajicabs.settings.Settings;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -90,9 +91,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import static com.tajicabs.configuration.TajiCabs.ACTIVITY_STATE;
-import static com.tajicabs.configuration.TajiCabs.COST;
-import static com.tajicabs.configuration.TajiCabs.NAMES;
 import static com.tajicabs.global.Constants.DEFAULT_ZOOM;
 import static com.tajicabs.global.Constants.GOOGLE_API;
 import static com.tajicabs.global.Constants.REQUEST_LOCATION;
@@ -169,6 +167,7 @@ public class Home extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        Variables.ACTIVITY_STATE = 0;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
 
@@ -247,6 +246,7 @@ public class Home extends AppCompatActivity implements
             rwServices.endTripUpdate();
             rootView = getWindow().getDecorView().getRootView();
 
+            END_TRIP = "N";
             showEndTripPopUp(rootView);
         }
 
@@ -465,13 +465,15 @@ public class Home extends AppCompatActivity implements
                     @Override
                     public void run() {
                         // Do some stuff
-                        Toast.makeText(Home.this, "We could not find any driver near you. Try again Later", Toast.LENGTH_LONG).show();
-                        popupWindow.dismiss();
+                        if (DR_NAME == null) {
+                            Toast.makeText(Home.this, "We could not find any driver near you. Try again Later", Toast.LENGTH_LONG).show();
+                            popupWindow.dismiss();
 
-                        locationLayout.setVisibility(View.GONE);
-                        requestLayout.setVisibility(View.VISIBLE);
-                        driverLayout.setVisibility(View.GONE);
-                        geoLocation.setVisibility(View.VISIBLE);
+                            locationLayout.setVisibility(View.GONE);
+                            requestLayout.setVisibility(View.VISIBLE);
+                            driverLayout.setVisibility(View.GONE);
+                            geoLocation.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
             }
@@ -511,7 +513,15 @@ public class Home extends AppCompatActivity implements
         final PopupWindow popupWindow = new PopupWindow(endTripPopUp, width, height, focusable);
         popupWindow.setElevation(8);
 
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        TextView tripAmount = endTripPopUp.findViewById(R.id.tripAmount);
+        tripAmount.setText(Variables.COST);
+
+        findViewById(R.id.app_bar_home).post(new Runnable() {
+            @Override
+            public void run() {
+                popupWindow.showAtLocation(findViewById(R.id.app_bar_home), Gravity.CENTER, 0, 0);
+            }
+        });
 
         endTripPopUp.setOnTouchListener(new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
@@ -553,15 +563,6 @@ public class Home extends AppCompatActivity implements
         } else {
             super.onBackPressed();
         }
-
-        /*if (requestBlock.getVisibility() == View.VISIBLE) {
-            requestBlock.setVisibility(View.GONE);
-            locationBlock.setVisibility(View.VISIBLE);
-
-            super.onBackPressed();
-        } else {
-            super.onBackPressed();
-        }*/
     }
 
     public void hideKeyboard(View view) {
@@ -583,15 +584,22 @@ public class Home extends AppCompatActivity implements
         int itemId = menuItem.getItemId();
         Intent intent;
 
-        if (itemId == R.id.profile) {
-            intent = new Intent(this, ProfileActivity.class);
-            startActivity(intent);
-        } else if (itemId == R.id.sign_out) {
-            FirebaseAuth.getInstance().signOut();
+        if (itemId == R.id.nav_settings) {
+            if (Variables.ACTIVITY_STATE == 0) {
+                Variables.ACTIVITY_STATE = 1;
 
-            intent = new Intent(this, SignIn.class);
-            startActivity(intent);
-            finish();
+                intent = new Intent(this, Settings.class);
+                startActivity(intent);
+            }
+        } else if (itemId == R.id.sign_out) {
+            if (Variables.ACTIVITY_STATE == 0) {
+                Variables.ACTIVITY_STATE = 1;
+                FirebaseAuth.getInstance().signOut();
+
+                intent = new Intent(this, SignIn.class);
+                startActivity(intent);
+                finish();
+            }
         }
         return false;
     }
