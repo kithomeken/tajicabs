@@ -2,15 +2,21 @@ package com.tajicabs.settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tajicabs.R;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.database.RWServices;
 import com.tajicabs.global.Variables;
+
+import static com.tajicabs.settings.ChangeUserProfile.USER_PROFILE_DIALOG;
 
 public class UserProfile extends AppCompatActivity {
     private RWServices rwServices;
@@ -41,7 +47,7 @@ public class UserProfile extends AppCompatActivity {
         accountName.setText(stringName);
         accountEmail.setText(emailAdd);
 
-        TextView accountFirstName, accountLastName, accountPhone, emailAccount;
+        final TextView accountFirstName, accountLastName, accountPhone, emailAccount;
 
         accountFirstName = findViewById(R.id.accountFName);
         accountLastName = findViewById(R.id.accountLastName);
@@ -52,6 +58,26 @@ public class UserProfile extends AppCompatActivity {
         accountLastName.setText(lastName);
         accountPhone.setText(phoneNumber);
         emailAccount.setText(emailAdd);
+
+        RelativeLayout firstNameLayout;
+
+        firstNameLayout = findViewById(R.id.firstNameLayout);
+        firstNameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Variables.ACTIVITY_STATE == 0) {
+                    Variables.ACTIVITY_STATE = 1;
+                    Context context = getApplicationContext();
+
+                    String title = "";
+                    String data = accountFirstName.getText().toString();
+                    int category = 1;
+
+                    DialogFragment dialogFragment = ChangeUserProfile.newInstance(title, data, category);
+                    dialogFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), USER_PROFILE_DIALOG);
+                }
+            }
+        });
     }
 
     @Override

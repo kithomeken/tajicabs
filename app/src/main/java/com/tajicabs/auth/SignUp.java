@@ -39,7 +39,6 @@ import com.tajicabs.global.Constants;
 import com.tajicabs.global.Variables;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.database.UserDetailsDao;
-import com.tajicabs.home.Home;
 import com.tajicabs.threads.AuthThread;
 
 import java.util.HashMap;
