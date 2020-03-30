@@ -109,7 +109,7 @@ public class RWServices {
 
         TripRequests tripRequests = new TripRequests(trip_id, origin_name, origin_lat, origin_lng, destination_name,
                 destination_lat, destination_lng, passenger_name, passenger_phone, trip_distance,
-                trip_cost, final_destination, trip_date, trip_state);
+                trip_cost, final_destination, trip_date, trip_state, "", "");
 
         new createTripRequestAsyncTask(tripRequestsDao).execute(tripRequests);
     }

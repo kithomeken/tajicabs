@@ -29,14 +29,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.tajicabs.R;
 
+import com.tajicabs.R;
+import com.tajicabs.app.OnBoardingUI;
+import com.tajicabs.app.Welcome;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.database.UserDetails;
 import com.tajicabs.database.UserDetailsDao;
 import com.tajicabs.global.Constants;
 import com.tajicabs.global.Variables;
-import com.tajicabs.home.Home;
 import com.tajicabs.threads.AuthThread;
 
 import org.json.JSONException;
@@ -46,11 +47,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-
-import static com.tajicabs.global.Variables.ACCOUNT_EMAIL;
-import static com.tajicabs.global.Variables.ACCOUNT_FNAME;
-import static com.tajicabs.global.Variables.ACCOUNT_LNAME;
-import static com.tajicabs.global.Variables.ACCOUNT_PHONE;
 
 public class SignIn extends AppCompatActivity {
     private static final String TAG = SignIn.class.getName();
@@ -110,6 +106,8 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (Variables.ACTIVITY_STATE == 0) {
+                    Variables.ACTIVITY_STATE = 1;
+
                     Intent intent = new Intent(getApplicationContext(), SignUp.class);
                     startActivity(intent);
                 }
@@ -120,6 +118,8 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (Variables.ACTIVITY_STATE == 0) {
+                    Variables.ACTIVITY_STATE = 1;
+
                     Intent intent = new Intent(getApplicationContext(), ForgotPassword.class);
                     startActivity(intent);
                 }
@@ -200,9 +200,6 @@ public class SignIn extends AppCompatActivity {
 
                             // Get Account Details
                             accountDetails(firebaseToken);
-
-                            // Update Firebase Token
-                            updateFirebaseToken(firebaseToken);
                         }
                     });
                 } else {
@@ -235,14 +232,16 @@ public class SignIn extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(response);
                             Log.e(TAG, "JSON Object: " + jsonObject);
 
-                            ACCOUNT_EMAIL = jsonObject.getString("email");
-                            ACCOUNT_FNAME = jsonObject.getString("first_name");
-                            ACCOUNT_LNAME = jsonObject.getString("last_name");
-                            ACCOUNT_PHONE = jsonObject.getString("phone_number");
+                            String emailAdd = jsonObject.getString("email");
+                            String firstName = jsonObject.getString("first_name");
+                            String lastName = jsonObject.getString("last_name");
+                            String phoneNumber = jsonObject.getString("phone_number");
 
                             // Add Entries to Application Database
-                            createUser(ACCOUNT_EMAIL, ACCOUNT_FNAME, ACCOUNT_LNAME, ACCOUNT_PHONE,
-                                    firebaseToken);
+                            createUser(emailAdd, firstName, lastName, phoneNumber, firebaseToken);
+
+                            // Update Firebase Token
+                            updateFirebaseToken(firebaseToken, emailAdd);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.e(TAG, "STACKTRACE: " + e.getMessage());
@@ -253,6 +252,15 @@ public class SignIn extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Volley Error: " + error.getMessage());
+                        FirebaseAuth.getInstance().signOut();
+
+                        authFailed.setVisibility(View.VISIBLE);
+                        String failedSignUp = "Error creating Taji Cabs account. Something went wrong. \nTry Again Later";
+                        accountError.setText(failedSignUp);
+
+                        Variables.ACTIVITY_STATE = 0;
+                        // End Main Thread
+                        authThread.hideProgressDialog();
                     }
                 });
 
@@ -270,7 +278,7 @@ public class SignIn extends AppCompatActivity {
         userDetailsDao.getUserDetails();
     }
 
-    private void updateFirebaseToken(final String firebaseToken) {
+    private void updateFirebaseToken(final String firebaseToken, final String emailAdd) {
         // Update Firebase Token on Sign In
         RequestQueue queue = Volley.newRequestQueue(context);
         String tajiUrl = Constants.API_HEADER + Constants.UPDATE_FIREBASE_TOKEN;
@@ -288,13 +296,22 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "VOLLEY ERROR: " + error.getMessage());
+                FirebaseAuth.getInstance().signOut();
+
+                authFailed.setVisibility(View.VISIBLE);
+                String failedSignUp = "Error creating Taji Cabs account. Something went wrong. \nTry Again Later";
+                accountError.setText(failedSignUp);
+
+                Variables.ACTIVITY_STATE = 0;
+                // End Main Thread
+                authThread.hideProgressDialog();
             }
         }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("token", firebaseToken);
-                params.put("email", ACCOUNT_EMAIL);
+                params.put("email", emailAdd);
 
                 return params;
             }
@@ -311,7 +328,7 @@ public class SignIn extends AppCompatActivity {
     }
 
     private void finishSignIn(){
-        Intent intent = new Intent(SignIn.this, Home.class);
+        Intent intent = new Intent(SignIn.this, OnBoardingUI.class);
         startActivity(intent);
 
         authThread.hideProgressDialog();

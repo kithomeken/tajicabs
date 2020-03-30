@@ -39,7 +39,6 @@ import com.tajicabs.global.Constants;
 import com.tajicabs.global.Variables;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.database.UserDetailsDao;
-import com.tajicabs.home.Home;
 import com.tajicabs.threads.AuthThread;
 
 import java.util.HashMap;
@@ -350,12 +349,10 @@ public class SignUp extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("token", firebaseToken);
-                params.put("group", "Passenger");
-                params.put("email", ACCOUNT_EMAIL);
-                params.put("name", ACCOUNT_NAME);
-                params.put("first_name", ACCOUNT_FNAME);
-                params.put("last_name", ACCOUNT_LNAME);
-                params.put("phone_number", ACCOUNT_PHONE);
+                params.put("email", email());
+                params.put("first_name", firstName());
+                params.put("last_name", lastName());
+                params.put("phone_number", phoneNumber());
 
                 return params;
             }
@@ -364,6 +361,7 @@ public class SignUp extends AppCompatActivity {
             public Map<String, String> getHeaders() {
                 Map<String, String> params = new HashMap<>();
                 params.put("Content-Type", "application/x-www-form-urlencoded");
+
                 return params;
             }
         };

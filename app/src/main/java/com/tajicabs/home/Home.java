@@ -83,7 +83,9 @@ import com.tajicabs.geolocation.LocationPool;
 import com.tajicabs.global.Variables;
 import com.tajicabs.passengers.ProfileActivity;
 import com.tajicabs.services.RequestServices;
+import com.tajicabs.settings.ContactUs;
 import com.tajicabs.settings.Settings;
+import com.tajicabs.trips.TripsActivity;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -591,6 +593,20 @@ public class Home extends AppCompatActivity implements
                 intent = new Intent(this, Settings.class);
                 startActivity(intent);
             }
+        } else if (itemId == R.id.nav_contacts) {
+            if (Variables.ACTIVITY_STATE == 0) {
+                Variables.ACTIVITY_STATE = 1;
+
+                intent = new Intent(this, ContactUs.class);
+                startActivity(intent);
+            }
+        } else if (itemId == R.id.nav_trips) {
+            if (Variables.ACTIVITY_STATE == 0) {
+                Variables.ACTIVITY_STATE = 1;
+
+                intent = new Intent(this, TripsActivity.class);
+                startActivity(intent);
+            }
         } else if (itemId == R.id.sign_out) {
             if (Variables.ACTIVITY_STATE == 0) {
                 Variables.ACTIVITY_STATE = 1;
@@ -600,8 +616,6 @@ public class Home extends AppCompatActivity implements
                 startActivity(intent);
                 finish();
             }
-        } else if (itemId == R.id.nav_contacts) {
-
         }
 
 
