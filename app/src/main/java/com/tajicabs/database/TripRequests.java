@@ -10,7 +10,7 @@ public class TripRequests {
                        @NonNull String origin_lng, @NonNull String destination_name, @NonNull String destination_lat,
                        @NonNull String destination_lng, @NonNull String passenger_name, @NonNull String passenger_phone,
                        @NonNull String trip_distance, @NonNull String trip_cost, @NonNull String final_destination,
-                       @NonNull String trip_date, @NonNull String trip_state) {
+                       @NonNull String trip_date, @NonNull String trip_state, String driver_name, String driver_phone) {
 
         this.trip_id = trip_id;
         this.origin_name = origin_name;
@@ -26,6 +26,9 @@ public class TripRequests {
         this.final_destination = final_destination;
         this.trip_date = trip_date;
         this.trip_state = trip_state;
+
+        this.driver_name = driver_name;
+        this.driver_phone = driver_phone;
     }
 
     @PrimaryKey/*(autoGenerate = true)*/
@@ -39,7 +42,7 @@ public class TripRequests {
 
     @ColumnInfo(name = "origin_lat")
     @NonNull
-    public String origin_lat;
+    String origin_lat;
 
     @ColumnInfo(name = "origin_lng")
     @NonNull
@@ -51,19 +54,19 @@ public class TripRequests {
 
     @ColumnInfo(name = "destination_lat")
     @NonNull
-    public String destination_lat;
+    private String destination_lat;
 
     @ColumnInfo(name = "destination_lng")
     @NonNull
-    public String destination_lng;
+    private String destination_lng;
 
     @ColumnInfo(name = "passenger_name")
     @NonNull
-    public String passenger_name;
+    private String passenger_name;
 
     @ColumnInfo(name = "passenger_phone")
     @NonNull
-    public String passenger_phone;
+    private String passenger_phone;
 
     @ColumnInfo(name = "trip_distance")
     @NonNull
@@ -75,18 +78,24 @@ public class TripRequests {
 
     @ColumnInfo(name = "final_destination")
     @NonNull
-    public String final_destination;
+    private String final_destination;
 
     @ColumnInfo(name = "trip_date")
     @NonNull
-    public String trip_date;
+    private String trip_date;
 
     @ColumnInfo(name = "trip_state")
     @NonNull
     public String trip_state;
 
+    @ColumnInfo(name = "driver_name")
+    public String driver_name;
+
+    @ColumnInfo(name = "driver_phone")
+    public String driver_phone;
+
     @NonNull
-    public String getTrip_id() {
+    String getTrip_id() {
         return trip_id;
     }
 
@@ -153,5 +162,15 @@ public class TripRequests {
     @NonNull
     public String getTripState() {
         return trip_state;
+    }
+
+    @NonNull
+    public String getDriver_name() {
+        return driver_name;
+    }
+
+    @NonNull
+    public String getDriver_phone() {
+        return driver_phone;
     }
 }

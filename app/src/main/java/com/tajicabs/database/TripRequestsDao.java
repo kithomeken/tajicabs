@@ -1,10 +1,13 @@
 package com.tajicabs.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import java.util.List;
 
 @Dao
 public interface TripRequestsDao {
@@ -22,4 +25,7 @@ public interface TripRequestsDao {
 
     @Query("SELECT * FROM tripDetails WHERE trip_id = :tripId")
     TripRequests getTripDetails(String tripId);
+
+    @Query("SELECT * FROM tripDetails WHERE trip_state = 'E'")
+    LiveData<List<TripRequests>> getCompletedTrips();
 }

@@ -50,19 +50,30 @@
         <activity
             android:name=".app.OnBoardingUI"
             android:theme="@style/AppTheme.TajiNoActionBar" />
+        <activity
+            android:name=".settings.ContactUs"
+            android:parentActivityName=".home.Home"
+            android:theme="@style/AppTheme.GreenTop" />
+        <activity
+            android:name=".settings.UserProfile"
+            android:parentActivityName=".settings.Settings"
+            android:theme="@style/AppTheme.GreenTop" />
+        <activity
+            android:name=".settings.PrivacyPolicy"
+            android:parentActivityName=".settings.Settings"
+            android:theme="@style/AppTheme.GreenTop" />
+        <activity
+            android:name=".settings.Settings"
+            android:parentActivityName=".home.Home"
+            android:theme="@style/AppTheme.GreenTop" />
+        <activity android:name=".trips.TripsActivity"
+            android:theme="@style/AppTheme.GreenTop"
+            android:parentActivityName=".home.Home" />
 
-        <activity android:name=".settings.ContactUs"
-            android:parentActivityName=".home.Home"
-            android:theme="@style/AppTheme.GreenTop"/>
-        <activity android:name=".settings.UserProfile"
-            android:parentActivityName=".settings.Settings"
-            android:theme="@style/AppTheme.GreenTop"/>
-        <activity android:name=".settings.PrivacyPolicy"
-            android:parentActivityName=".settings.Settings"
-            android:theme="@style/AppTheme.GreenTop"/>
-        <activity android:name=".settings.Settings"
-            android:parentActivityName=".home.Home"
-            android:theme="@style/AppTheme.GreenTop"/>
+
+        <!--
+            OLD SCREENS
+        -->
         <activity
             android:name=".passengers.ProfileActivity"
             android:theme="@style/AppTheme.TajiNoActionBar" />
