@@ -9,10 +9,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -74,14 +70,12 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import com.tajicabs.R;
-import com.tajicabs.app.App;
 import com.tajicabs.auth.SignIn;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.database.RWServices;
 import com.tajicabs.directions.TajiDirections;
 import com.tajicabs.geolocation.LocationPool;
 import com.tajicabs.global.Variables;
-import com.tajicabs.passengers.ProfileActivity;
 import com.tajicabs.services.RequestServices;
 import com.tajicabs.settings.ContactUs;
 import com.tajicabs.settings.Settings;

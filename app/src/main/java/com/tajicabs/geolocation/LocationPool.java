@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.tajicabs.R;
 import com.tajicabs.global.Constants;
+import com.tajicabs.global.Variables;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,16 +63,29 @@ public class LocationPool {
                             // Remove Existing Location Pool Markers
                             removeLocationPool();
 
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            if (Variables.DR_TOKEN != null) {
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                                String latitude = jsonObject.getString("latitude");
-                                String longitude = jsonObject.getString("longitude");
-                                String token = jsonObject.getString("token");
+                                    String latitude = jsonObject.getString("latitude");
+                                    String longitude = jsonObject.getString("longitude");
+                                    String token = jsonObject.getString("token");
 
-                                showLocationPool(latitude, longitude);
+                                    if (Variables.DR_TOKEN.equals(token)) {
+                                        showLocationPool(latitude, longitude);
+                                    }
+                                }
+                            } else {
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                                    String latitude = jsonObject.getString("latitude");
+                                    String longitude = jsonObject.getString("longitude");
+                                    String token = jsonObject.getString("token");
+
+                                    showLocationPool(latitude, longitude);
+                                }
                             }
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.e(TAG, "STACKTRACE: " + e.getMessage());
