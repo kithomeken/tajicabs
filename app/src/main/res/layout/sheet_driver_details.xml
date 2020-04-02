@@ -186,6 +186,14 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                    <ImageView
+                        android:id="@+id/phoneCall"
+                        android:layout_width="@dimen/dim_40"
+                        android:layout_height="@dimen/dim_40"
+                        android:scaleType="fitCenter"
+                        android:layout_marginEnd="@dimen/dim_25"
+                        android:src="@drawable/icon_phone_call" />
+
                 </LinearLayout>
 
                 </LinearLayout>
