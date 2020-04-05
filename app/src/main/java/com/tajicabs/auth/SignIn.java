@@ -32,7 +32,6 @@ import com.google.firebase.iid.InstanceIdResult;
 
 import com.tajicabs.R;
 import com.tajicabs.app.OnBoardingUI;
-import com.tajicabs.app.Welcome;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.database.UserDetails;
 import com.tajicabs.database.UserDetailsDao;
