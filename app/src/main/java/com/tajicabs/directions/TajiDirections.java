@@ -60,6 +60,7 @@ public class TajiDirections {
                     .await();
         } catch (InterruptedException | ApiException | IOException e) {
             e.printStackTrace();
+            Log.e(TAG, "Direction Exception ", e);
             return null;
         }
     }

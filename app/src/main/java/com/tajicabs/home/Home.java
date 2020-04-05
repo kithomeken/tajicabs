@@ -120,6 +120,7 @@ public class Home extends AppCompatActivity implements
 
     protected static final int overview = 0;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    protected static final int REQUEST_PHONE_CALL = 0x1;
 
     private GoogleMap googleMap;
     private LocationRequest mLocationRequest;
@@ -251,44 +252,48 @@ public class Home extends AppCompatActivity implements
         }
 
         if (Variables.DR_NAME != null) {
-            locationLayout.setVisibility(View.GONE);
-            requestLayout.setVisibility(View.GONE);
-            driverLayout.setVisibility(View.VISIBLE);
-
-            // Populate Text Views
-            TextView driverName, driverPhone, driverVehicle;
-            driverName = findViewById(R.id.driverName);
-            driverPhone = findViewById(R.id.driverPhone);
-            driverVehicle = findViewById(R.id.driverVehicle);
-
-            driverName.setText(DR_NAME);
-            driverPhone.setText(DR_PHONE);
-            driverVehicle.setText(DR_REG + " " + DR_MAKE);
-
-            ImageView phoneCall = findViewById(R.id.phoneCall);
-            phoneCall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String telephone = "tel:" + DR_PHONE;
-
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse(telephone));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    Activity#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for Activity#requestPermissions for more details.
-                            return;
-                        }
-                    }
-                    startActivity(callIntent);
-                }
-            });
+            showDriverDetails();
         }
+    }
+
+    private void showDriverDetails() {
+        locationLayout.setVisibility(View.GONE);
+        requestLayout.setVisibility(View.GONE);
+        driverLayout.setVisibility(View.VISIBLE);
+
+        // Populate Text Views
+        TextView driverName, driverPhone, driverVehicle;
+        driverName = findViewById(R.id.driverName);
+        driverPhone = findViewById(R.id.driverPhone);
+        driverVehicle = findViewById(R.id.driverVehicle);
+
+        driverName.setText(DR_NAME);
+        driverPhone.setText(DR_PHONE);
+        driverVehicle.setText(DR_REG + " " + DR_MAKE);
+
+        ImageView phoneCall = findViewById(R.id.phoneCall);
+        phoneCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String telephone = "tel:" + DR_PHONE;
+
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse(telephone));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    Activity#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for Activity#requestPermissions for more details.
+                        ActivityCompat.requestPermissions(Home.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                    }
+                }
+                startActivity(callIntent);
+            }
+        });
     }
 
     private void placesPickStartPoint() {
@@ -418,13 +423,18 @@ public class Home extends AppCompatActivity implements
             DirectionsResult directionsResult = tajiDirections
                     .getDirectionsDetails(ORIG_LTNG, DEST_LTNG, TravelMode.DRIVING);
 
+            Log.e(TAG, "Origin LatLng -- " + ORIG_LTNG);
+            Log.e(TAG, "Destination LatLng -- " + DEST_LTNG);
+            Log.e(TAG, "Directions Results -- " + directionsResult);
+
             if (directionsResult != null) {
                 tajiDirections.addPolyline(directionsResult, googleMap);
                 tajiDirections.positionCamera(directionsResult.routes[overview], googleMap);
                 tajiDirections.addMarkersToMap(directionsResult, googleMap);
+
+                DISTANCE = tajiDirections.distanceInMeters(directionsResult);
             }
 
-            DISTANCE = tajiDirections.distanceInMeters(directionsResult);
             TextView fromDisp, toDisp, distanceCovered, costDisp;
 
             fromDisp = findViewById(R.id.fromDisp);
@@ -497,6 +507,10 @@ public class Home extends AppCompatActivity implements
                             requestLayout.setVisibility(View.VISIBLE);
                             driverLayout.setVisibility(View.GONE);
                             geoLocation.setVisibility(View.VISIBLE);
+                        } else {
+                            showDriverDetails();
+                            popupWindow.dismiss();
+                            Thread.interrupted();
                         }
                     }
                 });
@@ -640,7 +654,6 @@ public class Home extends AppCompatActivity implements
             }
         }
 
-
         return false;
     }
 
@@ -701,11 +714,13 @@ public class Home extends AppCompatActivity implements
                         if (task.isSuccessful() && task.getResult() != null) {
                             mLastKnownLocation = task.getResult();
 
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(),
-                                    mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                            if (Variables.DR_TOKEN == null) {
+                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(),
+                                        mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
 
-                            mLocationRequest = new LocationRequest();
-                            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY );
+                                mLocationRequest = new LocationRequest();
+                                mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY );
+                            }
 
                             // Show Location of Other Devices - Drivers
                             final String latitude = "" + mLastKnownLocation.getLatitude();

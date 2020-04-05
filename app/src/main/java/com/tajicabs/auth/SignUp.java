@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,18 +41,13 @@ import com.tajicabs.global.Constants;
 import com.tajicabs.global.Variables;
 import com.tajicabs.database.AppDatabase;
 import com.tajicabs.database.UserDetailsDao;
+import com.tajicabs.settings.TermsAndConditions;
 import com.tajicabs.threads.AuthThread;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-
-import static com.tajicabs.global.Variables.ACCOUNT_EMAIL;
-import static com.tajicabs.global.Variables.ACCOUNT_FNAME;
-import static com.tajicabs.global.Variables.ACCOUNT_LNAME;
-import static com.tajicabs.global.Variables.ACCOUNT_NAME;
-import static com.tajicabs.global.Variables.ACCOUNT_PHONE;
 
 public class SignUp extends AppCompatActivity {
     private static String TAG = SignUp.class.getName();
@@ -71,8 +68,9 @@ public class SignUp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.auth_sign_up);
+        Variables.ACTIVITY_STATE = 0;
 
-        authThread = new AuthThread(SignUp.this, "Creating New User");
+        authThread = new AuthThread(SignUp.this, "Creating Your Account");
         firebaseAuth = FirebaseAuth.getInstance();
         appDatabase = AppDatabase.getDatabase(this);
         userDetailsDao = appDatabase.userDetailsDao();
@@ -101,6 +99,19 @@ public class SignUp extends AppCompatActivity {
 
                 if (Variables.ACTIVITY_STATE == 0) {
                     createAccount();
+                }
+            }
+        });
+
+        RelativeLayout termsAndConditions =  findViewById(R.id.terms_and_conditions);
+        termsAndConditions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Variables.ACTIVITY_STATE == 0) {
+                    Variables.ACTIVITY_STATE = 1;
+
+                    Intent intent = new Intent(getApplicationContext(), TermsAndConditions.class);
+                    startActivity(intent);
                 }
             }
         });
@@ -133,6 +144,7 @@ public class SignUp extends AppCompatActivity {
         return accountPassword.getText().toString();
     }
 
+    @SuppressLint("SetTextI18n")
     private boolean validateForm() {
         boolean valid = true;
 
@@ -184,6 +196,16 @@ public class SignUp extends AppCompatActivity {
             valid = false;
         } else {
             confirmPassword.setError(null);
+        }
+
+        CheckBox acceptTerms = findViewById(R.id.termsAndCondition);
+        if(!acceptTerms.isChecked()) {
+            authFailed.setVisibility(View.VISIBLE);
+            accountError.setText("Kindly Accept the Terms and Conditions");
+
+            valid = false;
+        } else {
+            authFailed.setVisibility(View.GONE);
         }
 
         return valid;
