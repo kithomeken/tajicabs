@@ -282,13 +282,11 @@
 
                     <TextView
                         android:id="@+id/accountError"
-                        android:visibility="invisible"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:textColor="@color/error"
                         android:gravity="center"
-                        android:textSize="@dimen/dim_15"
                         android:layout_marginBottom="@dimen/dim_00"
                         android:text="@string/sign_in_text"
                         tools:ignore="SpUsage" />
@@ -346,7 +344,7 @@
                             tools:ignore="UselessLeaf" />
 
                         <RelativeLayout
-                            android:id="@+id/t_and_c"
+                            android:id="@+id/terms_and_conditions"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="3"

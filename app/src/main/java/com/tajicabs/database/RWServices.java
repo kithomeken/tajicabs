@@ -57,11 +57,20 @@ public class RWServices {
         Log.e(TAG, "USER DETAILS: " + emailAdd + " ===== " + firebaseToken);
     }
 
-    public void endTripUpdate() {
-        TripRequests tripRequests = tripRequestsDao.getActiveTripRequest();
+    public void endTripUpdate(String tripId) {
+        TripRequests tripRequests = tripRequestsDao.getTripDetails(tripId);
 
         if (tripRequests != null) {
             tripRequests.trip_state = "E";
+            tripRequestsDao.updateTripDetails(tripRequests);
+        }
+    }
+
+    public void getTripDetails(String tripId) {
+        TripRequests tripRequests = tripRequestsDao.getTripDetails(tripId);
+
+        if (tripRequests != null) {
+            tripRequests.trip_state = "A";
             tripRequestsDao.updateTripDetails(tripRequests);
         }
     }
