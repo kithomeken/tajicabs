@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -67,14 +67,15 @@
             android:name=".settings.Settings"
             android:parentActivityName=".home.Home"
             android:theme="@style/AppTheme.GreenTop" />
-        <activity android:name=".trips.TripsActivity"
+        <activity
+            android:name=".trips.TripsActivity"
+            android:parentActivityName=".home.Home"
+            android:theme="@style/AppTheme.GreenTop" />
+        <activity android:name=".settings.TermsAndConditions"
             android:theme="@style/AppTheme.GreenTop"
-            android:parentActivityName=".home.Home" />
+            android:parentActivityName=".auth.SignUp"/>
 
-
-        <!--
-            OLD SCREENS
-        -->
+        <!--             OLD SCREENS                  -->
         <activity
             android:name=".passengers.ProfileActivity"
             android:theme="@style/AppTheme.TajiNoActionBar" />
