@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -102,9 +103,11 @@ import static com.tajicabs.global.Variables.DR_MAKE;
 import static com.tajicabs.global.Variables.DR_NAME;
 import static com.tajicabs.global.Variables.DR_PHONE;
 import static com.tajicabs.global.Variables.DR_REG;
+import static com.tajicabs.global.Variables.DR_TOKEN;
 import static com.tajicabs.global.Variables.END_TRIP;
 import static com.tajicabs.global.Variables.ORIG_LTNG;
 import static com.tajicabs.global.Variables.ORIG_NAME;
+import static com.tajicabs.global.Variables.STOP_THREAD;
 
 public class Home extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -139,10 +142,9 @@ public class Home extends AppCompatActivity implements
 
     private FloatingActionButton geoLocation;
     private EditText textPickUp, textDropOffs;
-    private Button requestRide, cancelRide;
 
     private static String EDIT_TEXT_TYPE = "E";
-    private View requestRidePopUp, endTripPopUp, tempView;
+    private View tempView;
     private ConstraintLayout locationLayout, requestLayout, driverLayout;
     private View rootView;
 
@@ -181,22 +183,7 @@ public class Home extends AppCompatActivity implements
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
 
-        if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), GOOGLE_API);
-        }
-
-        locationLayout = findViewById(R.id.sheet_location_details);
-        requestLayout = findViewById(R.id.sheet_request_trip);
-        driverLayout = findViewById(R.id.sheet_driver_details);
-
-        locationLayout.setVisibility(View.VISIBLE);
-        requestLayout.setVisibility(View.GONE);
-        driverLayout.setVisibility(View.GONE);
-
-        // Places Picker
-        placesPickStartPoint();
-        placesPickEndPoint();
-
+        // Google Maps Initialization
         mLocationRequest = new LocationRequest().setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -227,6 +214,14 @@ public class Home extends AppCompatActivity implements
         accountName.setText(ACCOUNT_NAME);
         accountEmail.setText(firebaseUser.getEmail());
 
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), GOOGLE_API);
+        }
+
+        // Places Picker
+        placesPickStartPoint();
+        placesPickEndPoint();
+
         geoLocation = findViewById(R.id.geo_location);
         geoLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,7 +230,15 @@ public class Home extends AppCompatActivity implements
             }
         });
 
-        requestRide = findViewById(R.id.requestRide);
+        locationLayout = findViewById(R.id.sheet_location_details);
+        requestLayout = findViewById(R.id.sheet_request_trip);
+        driverLayout = findViewById(R.id.sheet_driver_details);
+
+        locationLayout.setVisibility(View.VISIBLE);
+        requestLayout.setVisibility(View.GONE);
+        driverLayout.setVisibility(View.GONE);
+
+        Button requestRide = findViewById(R.id.requestRide);
         requestRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,7 +247,6 @@ public class Home extends AppCompatActivity implements
         });
 
         if (END_TRIP.equalsIgnoreCase("Y")) {
-            rwServices.endTripUpdate();
             rootView = getWindow().getDecorView().getRootView();
 
             END_TRIP = "N";
@@ -451,6 +453,11 @@ public class Home extends AppCompatActivity implements
             requestLayout.setVisibility(View.VISIBLE);
             driverLayout.setVisibility(View.GONE);
 
+            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)
+                    geoLocation.getLayoutParams();
+            layoutParams.setMargins(0, 0, 0, 590);
+            geoLocation.setLayoutParams(layoutParams);
+
             /*requestBlock.setVisibility(View.VISIBLE);
             locationBlock.setVisibility(View.GONE);
 
@@ -468,7 +475,7 @@ public class Home extends AppCompatActivity implements
         geoLocation.setVisibility(View.GONE);
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        requestRidePopUp = Objects.requireNonNull(layoutInflater).inflate(R.layout.modal_request_ride, null);
+        View requestRidePopUp = Objects.requireNonNull(layoutInflater).inflate(R.layout.modal_request_ride, null);
 
         boolean focusable = true;
         final PopupWindow popupWindow = new PopupWindow(requestRidePopUp, width, height, focusable);
@@ -499,6 +506,18 @@ public class Home extends AppCompatActivity implements
                     @Override
                     public void run() {
                         // Do some stuff
+  /*                      while(Variables.STOP_THREAD) {
+                            Log.e(TAG, "STOP THREAD VALUE -- 1: " + STOP_THREAD);
+                            showDriverDetails();
+                            popupWindow.dismiss();
+                            Thread.interrupted();
+                        }*/
+
+                        while(STOP_THREAD) {
+
+                        }
+
+                        Log.e(TAG, "STOP THREAD VALUE -- 2: " + STOP_THREAD);
                         if (DR_NAME == null) {
                             Toast.makeText(Home.this, "We could not find any driver near you. Try again Later", Toast.LENGTH_LONG).show();
                             popupWindow.dismiss();
@@ -507,10 +526,11 @@ public class Home extends AppCompatActivity implements
                             requestLayout.setVisibility(View.VISIBLE);
                             driverLayout.setVisibility(View.GONE);
                             geoLocation.setVisibility(View.VISIBLE);
-                        } else {
-                            showDriverDetails();
-                            popupWindow.dismiss();
-                            Thread.interrupted();
+
+                            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)
+                                    geoLocation.getLayoutParams();
+                            layoutParams.setMargins(0, 0, 0, 590);
+                            geoLocation.setLayoutParams(layoutParams);
                         }
                     }
                 });
@@ -521,7 +541,7 @@ public class Home extends AppCompatActivity implements
         // Request Ride
         requestRideNotification();
 
-        cancelRide = requestRidePopUp.findViewById(R.id.cancelRequest);
+        Button cancelRide = requestRidePopUp.findViewById(R.id.cancelRequest);
         cancelRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -531,6 +551,11 @@ public class Home extends AppCompatActivity implements
                 requestLayout.setVisibility(View.VISIBLE);
                 driverLayout.setVisibility(View.GONE);
                 geoLocation.setVisibility(View.VISIBLE);
+
+                CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)
+                        geoLocation.getLayoutParams();
+                layoutParams.setMargins(0, 0, 0, 590);
+                geoLocation.setLayoutParams(layoutParams);
             }
         });
     }
@@ -545,7 +570,7 @@ public class Home extends AppCompatActivity implements
         geoLocation.setVisibility(View.GONE);
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        endTripPopUp = Objects.requireNonNull(layoutInflater).inflate(R.layout.modal_end_trip, null);
+        View endTripPopUp = Objects.requireNonNull(layoutInflater).inflate(R.layout.modal_end_trip, null);
 
         boolean focusable = true;
         final PopupWindow popupWindow = new PopupWindow(endTripPopUp, width, height, focusable);
@@ -738,12 +763,17 @@ public class Home extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     //call function
-                                    ha.postDelayed(this, 10000);
-
+                                    ha.postDelayed(this, 3000);
                                     locationPool = new LocationPool(getApplicationContext(), googleMap, latitude, longitude);
-                                    locationPool.locationPoolRequest();
+
+                                    if (DR_TOKEN == null) {
+                                        locationPool.locationPoolRequest();
+                                    } else {
+                                        googleMap.setMyLocationEnabled(false);
+                                        locationPool.locationDriver();
+                                    }
                                 }
-                            }, 10000);
+                            }, 3000);
                         } else {
                             Log.d(TAG, "Current location is null. Using last know location.");
                             Log.e(TAG, "Exception: %s", task.getException());

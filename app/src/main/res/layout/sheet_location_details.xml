@@ -4,30 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sheet_location_details"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="230dp"
     android:background="@android:color/transparent"
     android:orientation="vertical"
-    android:padding="@dimen/dim_10"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="270dp"
+    app:behavior_peekHeight="230dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="@android:color/white"
-        app:cardElevation="3dp"
-        app:cardCornerRadius="10dp"
+        android:backgroundTint="@android:color/transparent"
+        android:layout_marginTop="@dimen/dim_10"
+        app:cardElevation="10dp"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
+            android:background="@drawable/top_corner_radius"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="40dp"
                 android:paddingStart="@dimen/dim_10"
                 android:paddingEnd="@dimen/dim_10"
                 android:layout_marginLeft="10dp"
@@ -52,66 +52,124 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:paddingStart="@dimen/dim_10"
-                android:paddingEnd="@dimen/dim_10"
                 android:layout_marginBottom="@dimen/dim_10"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="@dimen/dim_10"
+                android:orientation="horizontal"
+                android:weightSum="10"
                 tools:ignore="MissingConstraints">
 
-                <EditText
-                    android:id="@+id/textPickUp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:padding="@dimen/dim_10"
-                    android:background="@drawable/borderline"
-                    android:textSize="@dimen/dim_15"
-                    android:hint="Choose Pick Up Point" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="3dp"
-                    android:paddingEnd="@dimen/dim_05"
-                    android:paddingStart="@dimen/dim_05"
-                    android:background="#ffffff"
-                    android:text="Pick Up" />
-            </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
 
-            <RelativeLayout
+                    <ImageView
+                        android:layout_centerInParent="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/dim_05"
+                        android:scaleType="fitStart"
+                        android:src="@drawable/icon_my_location" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="9"
+                    android:layout_height="60dp"
+                    android:paddingStart="@dimen/dim_10"
+                    android:paddingEnd="@dimen/dim_00"
+                    tools:ignore="MissingConstraints">
+
+                    <EditText
+                        android:id="@+id/textPickUp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/white"
+                        android:padding="@dimen/dim_10"
+                        android:textSize="@dimen/dim_15"
+                        android:hint="@string/where_from"
+                        tools:ignore="SpUsage"
+                        android:importantForAutofill="no" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginTop="0dp"
+                        android:paddingEnd="@dimen/dim_05"
+                        android:paddingStart="@dimen/dim_05"
+                        android:background="#ffffff"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textAllCaps="true"
+                        android:text="Pick Up" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:paddingStart="@dimen/dim_10"
-                android:paddingEnd="@dimen/dim_10"
+                android:layout_marginBottom="@dimen/dim_30"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="@dimen/dim_20"
+                android:layout_marginTop="@dimen/dim_10"
+                android:orientation="horizontal"
+                android:weightSum="10"
                 tools:ignore="MissingConstraints">
 
-                <EditText
-                    android:id="@+id/textDropOff"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:padding="@dimen/dim_10"
-                    android:background="@drawable/borderline"
-                    android:textSize="@dimen/dim_15"
-                    android:hint="Choose Drop Off Point" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="3dp"
-                    android:paddingEnd="@dimen/dim_05"
-                    android:paddingStart="@dimen/dim_05"
-                    android:background="#ffffff"
-                    android:text="Drop Off" />
-            </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_centerInParent="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="@dimen/dim_05"
+                        android:scaleType="fitStart"
+                        android:src="@drawable/icon_end_location" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="9"
+                    android:layout_height="60dp"
+                    android:paddingStart="@dimen/dim_10"
+                    android:paddingEnd="@dimen/dim_00"
+                    tools:ignore="MissingConstraints">
+
+                    <EditText
+                        android:id="@+id/textDropOff"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/white"
+                        android:padding="@dimen/dim_10"
+                        android:textSize="@dimen/dim_15"
+                        android:hint="@string/where_to"
+                        tools:ignore="SpUsage" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginTop="0dp"
+                        android:paddingEnd="@dimen/dim_05"
+                        android:paddingStart="@dimen/dim_05"
+                        android:background="#ffffff"
+                        android:textColor="@color/error"
+                        android:textAllCaps="true"
+                        android:text="Drop Off" />
+                </RelativeLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
