@@ -11,11 +11,12 @@ public class Constants {
     public static final String REGISTER_FIREBASE_TOKEN = "/taji/firebase/passenger/register";
     public static final String FETCH_ACCOUNT_DETAILS = "/taji/firebase/account/details/passenger";
     public static final String UPDATE_FIREBASE_TOKEN = "/taji/firebase/passenger/register";
+    public static final String DRIVER_LOCATION = "/taji/firebase/driver/location";
 
 
 
 
-
+    // Old Constants
     public final static String PROJECT_URL = "https://taji.kennedykitho.me";
 
     public final static String LOCATION_POOL_REQUEST = PROJECT_URL + "/taji/firebase/location/pool";

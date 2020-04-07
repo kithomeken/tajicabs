@@ -9,6 +9,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -26,7 +27,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.tajicabs.global.Constants.DEFAULT_ZOOM;
 import static com.tajicabs.global.Constants.SNIPPET_KEY;
+import static com.tajicabs.global.Variables.DR_TOKEN;
 
 public class LocationPool {
     private static final String TAG = LocationPool.class.getName();
@@ -64,7 +67,7 @@ public class LocationPool {
                             // Remove Existing Location Pool Markers
                             removeLocationPool();
 
-                            if (Variables.DR_TOKEN != null) {
+                            if (DR_TOKEN != null) {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
@@ -72,7 +75,10 @@ public class LocationPool {
                                     String longitude = jsonObject.getString("longitude");
                                     String token = jsonObject.getString("token");
 
-                                    if (Variables.DR_TOKEN.equals(token)) {
+                                    Log.e(TAG, "Token: " + token);
+                                    Log.e(TAG, "DR_Token: " + DR_TOKEN);
+
+                                    if (DR_TOKEN.equals(token)) {
                                         showLocationPool(latitude, longitude);
                                     }
                                 }
@@ -126,5 +132,48 @@ public class LocationPool {
         for(Marker marker: markerArrayList) {
             marker.remove();
         }
+    }
+
+    public void locationDriver() {
+        /*
+         * Show location of Driver
+         * */
+
+        String stringUrl = Constants.API_HEADER + Constants.DRIVER_LOCATION + "?token=" + DR_TOKEN;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, stringUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            Log.e(TAG, "JSON Object: " + jsonObject);
+
+                            String latitude = jsonObject.getString("latitude");
+                            String longitude = jsonObject.getString("longitude");
+
+                            showLocationPool(latitude, longitude);
+                            String latLngString = latitude + ", " + longitude;
+                            String[] latlong = latLngString.split(",");
+
+                            double lat = Double.parseDouble(latlong[0]);
+                            double lng = Double.parseDouble(latlong[1]);
+
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,
+                                    lng), DEFAULT_ZOOM));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "STACKTRACE: " + e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        Volley.newRequestQueue(context).add(stringRequest);
     }
 }

@@ -225,6 +225,7 @@ public class MessagingServices extends FirebaseMessagingService implements IRequ
         Variables.DR_REG = hashMap.get("reg_no");
         Variables.DR_MAKE = hashMap.get("vehicle_make");
         Variables.DR_TOKEN = hashMap.get("driver_token");
+        Variables.STOP_THREAD = true;
 
         // Message Breakdown
         String title = hashMap.get("title");

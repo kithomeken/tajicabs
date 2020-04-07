@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class Variables {
     public static int ACTIVITY_STATE = 0;
+    public static boolean STOP_THREAD = false;
 
     public static String ACCOUNT_LNAME = null;
     public static String ACCOUNT_FNAME = null;
