@@ -1,6 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/black_backdrop"
+    android:orientation="vertical"
+    android:weightSum="10"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_margin="@dimen/dim_15"
+            android:backgroundTint="@android:color/white"
+            app:cardElevation="3dp"
+            app:cardCornerRadius="@dimen/dim_10">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="8.25"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1.5"
+                    android:paddingStart="@dimen/dim_10"
+                    android:paddingEnd="@dimen/dim_10"
+                    tools:ignore="MissingConstraints">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:paddingEnd="@dimen/dim_05"
+                        android:paddingStart="@dimen/dim_05"
+                        android:textColor="@color/dark_grey"
+                        android:textStyle="bold"
+                        android:layout_centerInParent="true"
+                        android:textSize="17dp"
+                        android:text="@string/reason_for_cancelling_request"
+                        android:gravity="center"
+                        tools:ignore="SpUsage" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="5.5"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/dim_30"
+                    android:paddingTop="@dimen/dim_15"
+                    android:paddingEnd="@dimen/dim_15"
+                    tools:ignore="MissingConstraints">
+
+                    <RadioButton
+                        android:id="@+id/cancelRadioButton1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/dim_05"
+                        android:paddingEnd="@dimen/dim_00"
+                        android:layout_marginBottom="@dimen/dim_20"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/radio_text_1"
+                        android:textSize="17sp" />
+
+                    <RadioButton
+                        android:id="@+id/cancelRadioButton2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/dim_05"
+                        android:paddingEnd="@dimen/dim_00"
+                        android:layout_marginBottom="@dimen/dim_20"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/radio_text_2"
+                        android:textSize="17sp" />
+
+                    <RadioButton
+                        android:id="@+id/cancelRadioButton3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/dim_05"
+                        android:paddingEnd="@dimen/dim_00"
+                        android:layout_marginBottom="@dimen/dim_20"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/radio_text_3"
+                        android:textSize="17sp" />
+
+                    <RadioButton
+                        android:id="@+id/cancelRadioButton4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/dim_05"
+                        android:paddingEnd="@dimen/dim_00"
+                        android:layout_marginBottom="@dimen/dim_20"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/radio_text_4"
+                        android:textSize="17sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1.25"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    tools:ignore="MissingConstraints">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/dismissCancelPopUp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorPrimaryDark"
+                        android:textColor="@color/white"
+                        android:text="@string/dismiss"
+                        android:layout_gravity="center"
+                        tools:ignore="NestedWeights" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/proceedToCancel"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:background="@color/dark_grey"
+                        android:textColor="@color/white"
+                        android:text="Proceed to Cancel"
+                        android:layout_gravity="center"
+                        tools:ignore="NestedWeights" />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:paddingStart="@dimen/dim_40"
+                    android:paddingEnd="@dimen/dim_40"
+                    tools:ignore="MissingConstraints">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/borderline"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:text="Finish"
+                        android:layout_gravity="center"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5" />
 
 </LinearLayout>
