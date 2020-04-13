@@ -22,6 +22,7 @@ import static com.tajicabs.global.Variables.ACCOUNT_NAME;
 import static com.tajicabs.global.Variables.ACCOUNT_PHONE;
 import static com.tajicabs.global.Variables.COST;
 import static com.tajicabs.global.Variables.DEST_LTNG;
+import static com.tajicabs.global.Variables.DEST_NAME;
 import static com.tajicabs.global.Variables.DISTANCE;
 import static com.tajicabs.global.Variables.ORIG_LTNG;
 import static com.tajicabs.global.Variables.ORIG_NAME;
@@ -81,16 +82,16 @@ public class RequestServices {
                 // Create Trip Request
                 RWServices rwServices = new RWServices(appDatabase);
                 rwServices.createTripRequest(tripId, ORIG_NAME, String.valueOf(ORIG_LTNG.latitude),
-                        String.valueOf(ORIG_LTNG.longitude), String.valueOf(DEST_LTNG.latitude),
+                        String.valueOf(ORIG_LTNG.longitude), DEST_NAME, String.valueOf(DEST_LTNG.latitude),
                         String.valueOf(DEST_LTNG.longitude), ACCOUNT_NAME, ACCOUNT_PHONE, DISTANCE,
-                        COST, emptyString, emptyString, emptyString, emptyString);
+                        COST, emptyString, emptyString, "R");
 
                 return params;
             }
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
                 params.put("Content-Type", "application/x-www-form-urlencoded");
                 return params;
             }

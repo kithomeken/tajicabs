@@ -31,11 +31,16 @@
         android:layout_marginTop="@dimen/fab_margin"
         android:layout_marginStart="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="280dp"
+        android:layout_marginBottom="230dp"
         app:srcCompat="@drawable/ic_geo_location" />
 
-    <include layout="@layout/sheet_location_details" />
-    <include layout="@layout/sheet_request_trip" />
-    <include layout="@layout/sheet_driver_details" />
+    <include layout="@layout/sheet_location_details"
+        android:visibility="gone"/>
+
+    <include layout="@layout/sheet_request_trip"
+        android:visibility="visible"/>
+
+    <include layout="@layout/sheet_driver_details"
+        android:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

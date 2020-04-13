@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -24,6 +25,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -90,6 +92,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.tajicabs.global.Constants.DEFAULT_ZOOM;
 import static com.tajicabs.global.Constants.GOOGLE_API;
@@ -102,9 +105,11 @@ import static com.tajicabs.global.Variables.DR_MAKE;
 import static com.tajicabs.global.Variables.DR_NAME;
 import static com.tajicabs.global.Variables.DR_PHONE;
 import static com.tajicabs.global.Variables.DR_REG;
+import static com.tajicabs.global.Variables.DR_TOKEN;
 import static com.tajicabs.global.Variables.END_TRIP;
 import static com.tajicabs.global.Variables.ORIG_LTNG;
 import static com.tajicabs.global.Variables.ORIG_NAME;
+import static com.tajicabs.global.Variables.STOP_THREAD;
 
 public class Home extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -139,10 +144,9 @@ public class Home extends AppCompatActivity implements
 
     private FloatingActionButton geoLocation;
     private EditText textPickUp, textDropOffs;
-    private Button requestRide, cancelRide;
 
     private static String EDIT_TEXT_TYPE = "E";
-    private View requestRidePopUp, endTripPopUp, tempView;
+    private View tempView;
     private ConstraintLayout locationLayout, requestLayout, driverLayout;
     private View rootView;
 
@@ -181,22 +185,7 @@ public class Home extends AppCompatActivity implements
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
 
-        if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), GOOGLE_API);
-        }
-
-        locationLayout = findViewById(R.id.sheet_location_details);
-        requestLayout = findViewById(R.id.sheet_request_trip);
-        driverLayout = findViewById(R.id.sheet_driver_details);
-
-        locationLayout.setVisibility(View.VISIBLE);
-        requestLayout.setVisibility(View.GONE);
-        driverLayout.setVisibility(View.GONE);
-
-        // Places Picker
-        placesPickStartPoint();
-        placesPickEndPoint();
-
+        // Google Maps Initialization
         mLocationRequest = new LocationRequest().setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -227,6 +216,14 @@ public class Home extends AppCompatActivity implements
         accountName.setText(ACCOUNT_NAME);
         accountEmail.setText(firebaseUser.getEmail());
 
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), GOOGLE_API);
+        }
+
+        // Places Picker
+        placesPickStartPoint();
+        placesPickEndPoint();
+
         geoLocation = findViewById(R.id.geo_location);
         geoLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,7 +232,15 @@ public class Home extends AppCompatActivity implements
             }
         });
 
-        requestRide = findViewById(R.id.requestRide);
+        locationLayout = findViewById(R.id.sheet_location_details);
+        requestLayout = findViewById(R.id.sheet_request_trip);
+        driverLayout = findViewById(R.id.sheet_driver_details);
+
+        locationLayout.setVisibility(View.VISIBLE);
+        requestLayout.setVisibility(View.GONE);
+        driverLayout.setVisibility(View.GONE);
+
+        Button requestRide = findViewById(R.id.requestRide);
         requestRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,7 +249,6 @@ public class Home extends AppCompatActivity implements
         });
 
         if (END_TRIP.equalsIgnoreCase("Y")) {
-            rwServices.endTripUpdate();
             rootView = getWindow().getDecorView().getRootView();
 
             END_TRIP = "N";
@@ -262,14 +266,15 @@ public class Home extends AppCompatActivity implements
         driverLayout.setVisibility(View.VISIBLE);
 
         // Populate Text Views
-        TextView driverName, driverPhone, driverVehicle;
+        TextView driverName, vehicleDetails, vehicleReg;
+
         driverName = findViewById(R.id.driverName);
-        driverPhone = findViewById(R.id.driverPhone);
-        driverVehicle = findViewById(R.id.driverVehicle);
+        vehicleDetails = findViewById(R.id.vehicleDetails);
+        vehicleReg = findViewById(R.id.vehicleReg);
 
         driverName.setText(DR_NAME);
-        driverPhone.setText(DR_PHONE);
-        driverVehicle.setText(DR_REG + " " + DR_MAKE);
+        vehicleDetails.setText(DR_MAKE);
+        vehicleReg.setText(DR_REG);
 
         ImageView phoneCall = findViewById(R.id.phoneCall);
         phoneCall.setOnClickListener(new View.OnClickListener() {
@@ -451,6 +456,11 @@ public class Home extends AppCompatActivity implements
             requestLayout.setVisibility(View.VISIBLE);
             driverLayout.setVisibility(View.GONE);
 
+            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)
+                    geoLocation.getLayoutParams();
+            layoutParams.setMargins(0, 0, 0, 590);
+            geoLocation.setLayoutParams(layoutParams);
+
             /*requestBlock.setVisibility(View.VISIBLE);
             locationBlock.setVisibility(View.GONE);
 
@@ -468,7 +478,7 @@ public class Home extends AppCompatActivity implements
         geoLocation.setVisibility(View.GONE);
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        requestRidePopUp = Objects.requireNonNull(layoutInflater).inflate(R.layout.modal_request_ride, null);
+        View requestRidePopUp = Objects.requireNonNull(layoutInflater).inflate(R.layout.modal_request_ride, null);
 
         boolean focusable = true;
         final PopupWindow popupWindow = new PopupWindow(requestRidePopUp, width, height, focusable);
@@ -485,10 +495,49 @@ public class Home extends AppCompatActivity implements
             }
         });
 
-        // Dismiss Window After 1 Minute
-        Thread thread = new Thread() {
+        // Thread Initialization
+        Thread loadingThread;
+        final Thread responseThread;
+        final Handler handler = new Handler();
+
+        responseThread = new Thread() {
             @Override
             public void run() {
+                Looper.prepare();
+                int count = 0;
+
+                while(!STOP_THREAD) {
+                    count ++;
+                }
+
+                if (DR_NAME != null) {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            if (!Thread.interrupted()) {
+                                Log.e(TAG, "Running Response Thread");
+                                Log.e(TAG, "Response Thread DR_NAME: " + DR_NAME);
+                                showDriverDetails();
+                                popupWindow.dismiss();
+
+                                Log.e(TAG, "Stop Thread: " + STOP_THREAD);
+                                Thread.currentThread().interrupt();
+                                Log.e(TAG, "Interrupt Response Thread: " + Thread.interrupted());
+                            }
+                        }
+                    });
+                } else {
+                    Thread.currentThread().interrupt();
+                    Log.e(TAG, "Interrupt Response Thread: " + Thread.interrupted());
+                }
+            }
+        };
+
+        // Dismiss Loading Window After 1 Minute
+        loadingThread = new Thread() {
+            @Override
+            public void run() {
+                Log.e(TAG, "Running Loading Thread");
+
                 try {
                     Thread.sleep(60000);
                 } catch (InterruptedException e) {
@@ -498,30 +547,46 @@ public class Home extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // Do some stuff
-                        if (DR_NAME == null) {
-                            Toast.makeText(Home.this, "We could not find any driver near you. Try again Later", Toast.LENGTH_LONG).show();
-                            popupWindow.dismiss();
+                        if (!interrupted()) {
+                            Log.e(TAG, "Active Loading Thread");
 
-                            locationLayout.setVisibility(View.GONE);
-                            requestLayout.setVisibility(View.VISIBLE);
-                            driverLayout.setVisibility(View.GONE);
-                            geoLocation.setVisibility(View.VISIBLE);
-                        } else {
-                            showDriverDetails();
-                            popupWindow.dismiss();
-                            Thread.interrupted();
+                            if (DR_NAME == null) {
+                                Toast.makeText(Home.this, "We could not find any driver near you. Try again Later", Toast.LENGTH_LONG).show();
+                                popupWindow.dismiss();
+
+                                locationLayout.setVisibility(View.GONE);
+                                requestLayout.setVisibility(View.VISIBLE);
+                                driverLayout.setVisibility(View.GONE);
+                                geoLocation.setVisibility(View.VISIBLE);
+
+                                CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)
+                                        geoLocation.getLayoutParams();
+                                layoutParams.setMargins(0, 0, 0, 590);
+                                geoLocation.setLayoutParams(layoutParams);
+
+                                // End Exit Thread
+                                STOP_THREAD = true;
+                                Thread.currentThread().interrupt();
+                                Log.e(TAG, "Interrupt Loading Thread: " + Thread.interrupted());
+                            } else {
+                                // End Exit Thread
+                                STOP_THREAD = false;
+                                Thread.currentThread().interrupt();
+                                Log.e(TAG, "Interrupt Loading Thread: " + Thread.interrupted());
+                            }
                         }
                     }
                 });
             }
         };
-        thread.start();
+
+        loadingThread.start();
+        responseThread.start();
 
         // Request Ride
         requestRideNotification();
 
-        cancelRide = requestRidePopUp.findViewById(R.id.cancelRequest);
+        Button cancelRide = requestRidePopUp.findViewById(R.id.cancelRequest);
         cancelRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -531,6 +596,11 @@ public class Home extends AppCompatActivity implements
                 requestLayout.setVisibility(View.VISIBLE);
                 driverLayout.setVisibility(View.GONE);
                 geoLocation.setVisibility(View.VISIBLE);
+
+                CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)
+                        geoLocation.getLayoutParams();
+                layoutParams.setMargins(0, 0, 0, 590);
+                geoLocation.setLayoutParams(layoutParams);
             }
         });
     }
@@ -539,13 +609,19 @@ public class Home extends AppCompatActivity implements
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
         int height = LinearLayout.LayoutParams.MATCH_PARENT;
 
+        Variables.DR_NAME  = null;
+        Variables.DR_PHONE = null;
+        Variables.DR_REG   = null;
+        Variables.DR_MAKE  = null;
+        Variables.DR_TOKEN = null;
+
         locationLayout.setVisibility(View.GONE);
         requestLayout.setVisibility(View.GONE);
         driverLayout.setVisibility(View.GONE);
         geoLocation.setVisibility(View.GONE);
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        endTripPopUp = Objects.requireNonNull(layoutInflater).inflate(R.layout.modal_end_trip, null);
+        View endTripPopUp = Objects.requireNonNull(layoutInflater).inflate(R.layout.modal_end_trip, null);
 
         boolean focusable = true;
         final PopupWindow popupWindow = new PopupWindow(endTripPopUp, width, height, focusable);
@@ -738,12 +814,17 @@ public class Home extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     //call function
-                                    ha.postDelayed(this, 10000);
-
+                                    ha.postDelayed(this, 3000);
                                     locationPool = new LocationPool(getApplicationContext(), googleMap, latitude, longitude);
-                                    locationPool.locationPoolRequest();
+
+                                    if (DR_TOKEN == null) {
+                                        locationPool.locationPoolRequest();
+                                    } else {
+                                        googleMap.setMyLocationEnabled(false);
+                                        locationPool.locationDriver();
+                                    }
                                 }
-                            }, 10000);
+                            }, 3000);
                         } else {
                             Log.d(TAG, "Current location is null. Using last know location.");
                             Log.e(TAG, "Exception: %s", task.getException());
