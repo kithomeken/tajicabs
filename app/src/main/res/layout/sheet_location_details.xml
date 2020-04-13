@@ -16,6 +16,8 @@
         android:layout_height="match_parent"
         android:backgroundTint="@android:color/transparent"
         android:layout_marginTop="@dimen/dim_10"
+        android:layout_columnWeight="1"
+        android:layout_rowWeight="1"
         app:cardElevation="10dp"
         tools:ignore="MissingConstraints">
 

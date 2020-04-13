@@ -9,6 +9,7 @@
     android:orientation="vertical"
     app:behavior_hideable="false"
     app:behavior_peekHeight="325dp"
+    android:fitsSystemWindows="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <androidx.cardview.widget.CardView
@@ -16,7 +17,7 @@
         android:layout_height="match_parent"
         android:backgroundTint="@android:color/transparent"
         android:layout_marginTop="@dimen/dim_10"
-        app:cardElevation="8dp"
+        app:cardElevation="3dp"
         tools:ignore="MissingConstraints">
 
         <LinearLayout
