@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -91,6 +92,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.tajicabs.global.Constants.DEFAULT_ZOOM;
 import static com.tajicabs.global.Constants.GOOGLE_API;
@@ -264,14 +266,15 @@ public class Home extends AppCompatActivity implements
         driverLayout.setVisibility(View.VISIBLE);
 
         // Populate Text Views
-        TextView driverName, driverPhone, driverVehicle;
+        TextView driverName, vehicleDetails, vehicleReg;
+
         driverName = findViewById(R.id.driverName);
-        driverPhone = findViewById(R.id.driverPhone);
-        driverVehicle = findViewById(R.id.driverVehicle);
+        vehicleDetails = findViewById(R.id.vehicleDetails);
+        vehicleReg = findViewById(R.id.vehicleReg);
 
         driverName.setText(DR_NAME);
-        driverPhone.setText(DR_PHONE);
-        driverVehicle.setText(DR_REG + " " + DR_MAKE);
+        vehicleDetails.setText(DR_MAKE);
+        vehicleReg.setText(DR_REG);
 
         ImageView phoneCall = findViewById(R.id.phoneCall);
         phoneCall.setOnClickListener(new View.OnClickListener() {
@@ -492,10 +495,49 @@ public class Home extends AppCompatActivity implements
             }
         });
 
-        // Dismiss Window After 1 Minute
-        Thread thread = new Thread() {
+        // Thread Initialization
+        Thread loadingThread;
+        final Thread responseThread;
+        final Handler handler = new Handler();
+
+        responseThread = new Thread() {
             @Override
             public void run() {
+                Looper.prepare();
+                int count = 0;
+
+                while(!STOP_THREAD) {
+                    count ++;
+                }
+
+                if (DR_NAME != null) {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            if (!Thread.interrupted()) {
+                                Log.e(TAG, "Running Response Thread");
+                                Log.e(TAG, "Response Thread DR_NAME: " + DR_NAME);
+                                showDriverDetails();
+                                popupWindow.dismiss();
+
+                                Log.e(TAG, "Stop Thread: " + STOP_THREAD);
+                                Thread.currentThread().interrupt();
+                                Log.e(TAG, "Interrupt Response Thread: " + Thread.interrupted());
+                            }
+                        }
+                    });
+                } else {
+                    Thread.currentThread().interrupt();
+                    Log.e(TAG, "Interrupt Response Thread: " + Thread.interrupted());
+                }
+            }
+        };
+
+        // Dismiss Loading Window After 1 Minute
+        loadingThread = new Thread() {
+            @Override
+            public void run() {
+                Log.e(TAG, "Running Loading Thread");
+
                 try {
                     Thread.sleep(60000);
                 } catch (InterruptedException e) {
@@ -505,38 +547,41 @@ public class Home extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // Do some stuff
-  /*                      while(Variables.STOP_THREAD) {
-                            Log.e(TAG, "STOP THREAD VALUE -- 1: " + STOP_THREAD);
-                            showDriverDetails();
-                            popupWindow.dismiss();
-                            Thread.interrupted();
-                        }*/
+                        if (!interrupted()) {
+                            Log.e(TAG, "Active Loading Thread");
 
-                        while(STOP_THREAD) {
+                            if (DR_NAME == null) {
+                                Toast.makeText(Home.this, "We could not find any driver near you. Try again Later", Toast.LENGTH_LONG).show();
+                                popupWindow.dismiss();
 
-                        }
+                                locationLayout.setVisibility(View.GONE);
+                                requestLayout.setVisibility(View.VISIBLE);
+                                driverLayout.setVisibility(View.GONE);
+                                geoLocation.setVisibility(View.VISIBLE);
 
-                        Log.e(TAG, "STOP THREAD VALUE -- 2: " + STOP_THREAD);
-                        if (DR_NAME == null) {
-                            Toast.makeText(Home.this, "We could not find any driver near you. Try again Later", Toast.LENGTH_LONG).show();
-                            popupWindow.dismiss();
+                                CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)
+                                        geoLocation.getLayoutParams();
+                                layoutParams.setMargins(0, 0, 0, 590);
+                                geoLocation.setLayoutParams(layoutParams);
 
-                            locationLayout.setVisibility(View.GONE);
-                            requestLayout.setVisibility(View.VISIBLE);
-                            driverLayout.setVisibility(View.GONE);
-                            geoLocation.setVisibility(View.VISIBLE);
-
-                            CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams)
-                                    geoLocation.getLayoutParams();
-                            layoutParams.setMargins(0, 0, 0, 590);
-                            geoLocation.setLayoutParams(layoutParams);
+                                // End Exit Thread
+                                STOP_THREAD = true;
+                                Thread.currentThread().interrupt();
+                                Log.e(TAG, "Interrupt Loading Thread: " + Thread.interrupted());
+                            } else {
+                                // End Exit Thread
+                                STOP_THREAD = false;
+                                Thread.currentThread().interrupt();
+                                Log.e(TAG, "Interrupt Loading Thread: " + Thread.interrupted());
+                            }
                         }
                     }
                 });
             }
         };
-        thread.start();
+
+        loadingThread.start();
+        responseThread.start();
 
         // Request Ride
         requestRideNotification();
@@ -563,6 +608,12 @@ public class Home extends AppCompatActivity implements
     private void showEndTripPopUp(View view){
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
         int height = LinearLayout.LayoutParams.MATCH_PARENT;
+
+        Variables.DR_NAME  = null;
+        Variables.DR_PHONE = null;
+        Variables.DR_REG   = null;
+        Variables.DR_MAKE  = null;
+        Variables.DR_TOKEN = null;
 
         locationLayout.setVisibility(View.GONE);
         requestLayout.setVisibility(View.GONE);
